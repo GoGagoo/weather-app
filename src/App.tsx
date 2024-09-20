@@ -1,10 +1,13 @@
 import React from 'react'
-import { StyledDiv } from './root.styles'
+import { SearchInput, Navbar, TempToggler } from './components'
 
 const App: React.FC = () => {
 	return (
 		<div>
-			<h1>Barev, Ashxarh!</h1>
+			<Navbar>
+				<SearchInput />
+				<TempToggler />
+			</Navbar>
 		</div>
 	)
 }
