@@ -1,5 +1,11 @@
 import React from 'react'
-import { SearchInput, Navbar, TempToggler, WeatherDisplay } from './components'
+import {
+	Navbar,
+	SearchInput,
+	TempToggler,
+	WeatherDetails,
+	WeatherDisplay,
+} from './components'
 
 const App: React.FC = () => {
 	return (
@@ -9,6 +15,7 @@ const App: React.FC = () => {
 				<TempToggler />
 			</Navbar>
 			<WeatherDisplay />
+			<WeatherDetails />
 		</div>
 	)
 }

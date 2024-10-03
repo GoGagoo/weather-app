@@ -2,6 +2,7 @@ import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 
 export const Global = createGlobalStyle`
+
 * {
 	margin: 0;
 	padding: 0;
@@ -10,10 +11,10 @@ export const Global = createGlobalStyle`
 
 html, body {
 	width: 100%;
-  height: 100%;
 }
 
 body {
+	border-color: 2px solid pink;
 	min-height: 95vh;
 	color: rgb(255, 255, 255);
 	font-family: 'HelveticaNeue-Roman', sans-serif;
@@ -32,14 +33,14 @@ body.dark {
 }
 
 @keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 `
