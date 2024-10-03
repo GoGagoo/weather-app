@@ -1,15 +1,23 @@
-import React from 'react'
-import { SearchInput, Navbar, TempToggler } from './components'
+import { Togglers } from './App.styled'
+import {
+	Navbar,
+	SearchInput,
+	TempToggler,
+	ThemeToggler,
+	WeatherInfo,
+} from './components'
 
-const App: React.FC = () => {
-	return (
-		<div>
-			<Navbar>
-				<SearchInput />
+const App = () => (
+	<>
+		<Navbar>
+			<SearchInput />
+			<Togglers>
+				<ThemeToggler />
 				<TempToggler />
-			</Navbar>
-		</div>
-	)
-}
+			</Togglers>
+		</Navbar>
+		<WeatherInfo />
+	</>
+)
 
 export default App

@@ -1,30 +1,18 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'
 import App from './App'
-import { createGlobalStyle } from 'styled-components'
+import { ThemeProvider } from './contexts/ThemeContext'
+import store from './store/store'
+import { Global } from './styles/globals'
 
-const Global = createGlobalStyle`
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
+const rootElement = document.getElementById('root')
+const root = ReactDOM.createRoot(rootElement!)
 
-html, body {
-	background: linear-gradient(to right top, #20D1BC, #1AADE3);
-	color: rgb(255, 255, 255);
-	font-family: 'HelveticaNeue-Roman', sans-serif;
-}
-
-body {
-	min-height: 95vh;
-}
-`
-
-ReactDOM.render(
-	<>
-		<Global />
-		<App />
-	</>,
-	document.getElementById('root')
+root.render(
+	<Provider store={store}>
+		<ThemeProvider>
+			<Global />
+			<App />
+		</ThemeProvider>
+	</Provider>
 )
