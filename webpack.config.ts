@@ -1,6 +1,9 @@
 import webpack from 'webpack'
 import path from 'path'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 import type { Configuration as DevServerConfiguration } from 'webpack-dev-server'
 
@@ -70,6 +73,9 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 		new HtmlWebpackPlugin({
 			template: './public/index.html', 
 		}),
+		new webpack.DefinePlugin({
+			'process.env': JSON.stringify(process.env)
+	})
 	],
 }
 

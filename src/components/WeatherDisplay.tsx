@@ -1,6 +1,8 @@
-import React from 'react'
-import { Cloud, MapPin, Snowflake } from 'lucide-react'
+import { MapPin } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { getWeatherData } from '../api'
+import { WEATHER_API_KEY } from '../constants/constants'
 
 const WeatherDisplayContainer = styled.div`
 	margin: 90px 44px 96px 34px;
@@ -116,7 +118,7 @@ const ForecastOtherData = styled.div`
 
 	&:hover {
 		background-color: #21a4a6;
-		transition: 150ms;
+		transition: 350ms;
 	}
 `
 
@@ -126,6 +128,70 @@ const ForecastTemperature = styled.p`
 `
 
 export const WeatherDisplay = () => {
+	const [weatherData, setWeatherData] = useState<any>(null)
+	const [loading, setLoading] = useState<boolean>(true)
+	const [forecastData, setForecastData] = useState<
+		{ 
+			temperature: number; 
+			time: string; 
+			icon: JSX.Element 
+		}[]
+	>([])
+
+	useEffect(() => {
+		fetch(
+			`https://api.openweathermap.org/data/2.5/forecast?q=Yerevan&appid=${WEATHER_API_KEY}`
+		)
+			.then((res) => res.json())
+			.then((data) => {
+				const forecastData = data.list.map((item: any, index: any) => ({
+					time: new Date(item.dt * 1000).toLocaleTimeString('en-GB', { hour: 'numeric', hour12: true }).toLowerCase(),
+					temperature: Math.round(item.main.temp - 273.15),
+					icon: (
+						<img
+							src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+							alt={item.weather[0].description}
+						/>
+					),
+				}))
+				setForecastData(forecastData)
+			})
+			.catch((error) => console.error(error))
+	}, [])
+
+	useEffect(() => {
+		const fetchWeather = async () => {
+			const data = await getWeatherData('Yerevan')
+			setWeatherData(data)
+			setLoading(false)
+		}
+		fetchWeather()
+	}, [])
+
+	if (loading) {
+		return <p>Loading weather data...</p>
+	}
+
+	if (!weatherData) {
+		return <p>Error loading weather data</p>
+	}
+
+	const { main, name, dt, sys, weather } = weatherData
+
+	const cityName = name
+
+	const temperatureCelsius = main.temp
+	const temperatureFahrenheit = (temperatureCelsius * 9) / 5 + 32
+
+	const date = new Date(dt * 1000)
+	const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' })
+	const dayOfMonth = date.getDate()
+	const month = date.toLocaleString('en-US', { month: 'short' })
+
+	const country = sys.country
+
+	const formattedDate = `${dayOfWeek}, ${dayOfMonth} ${month}`
+
 	return (
 		<>
 			<WeatherDisplayContainer>
@@ -133,72 +199,44 @@ export const WeatherDisplay = () => {
 					<CurrentWeatherBlock>
 						<CurrentWeatherDate>
 							<p>Today</p>
-							<p style={{ fontSize: '14px' }}>Ср, 17 Фев</p>
+							<p style={{ fontSize: '14px' }}>{formattedDate}</p>
 						</CurrentWeatherDate>
-						<Snowflake size={44} />
+						{weather.icon}
 					</CurrentWeatherBlock>
-					<Temperature>2°</Temperature>
+					<Temperature>{temperatureCelsius.toFixed()}°</Temperature>
 					<CityCountryWrapper>
-						<MapPin size={24} /> <CityCountry>Cracow, Poland</CityCountry>
+						<MapPin size={24} />{' '}
+						<CityCountry>
+							{cityName}, {country}
+						</CityCountry>
 					</CityCountryWrapper>
 				</CurrentWeatherInfo>
 				<HourlyForecastContainer>
-					<ForecastDataWrapper>
-						<WeatherTime>Now</WeatherTime>
-						<ForecastCurrentData>
-							<Snowflake size={44} />
-							<ForecastTemperature>2°</ForecastTemperature>
-						</ForecastCurrentData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>12 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>2°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>1 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>-1°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>2 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>-1°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>3 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>-3°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>4 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>-3°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>5 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>-1°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
-					<ForecastDataWrapper>
-						<WeatherTime>6 pm</WeatherTime>
-						<ForecastOtherData>
-							<Cloud size={44} />
-							<ForecastTemperature>0°</ForecastTemperature>
-						</ForecastOtherData>
-					</ForecastDataWrapper>
+					{forecastData.slice(0, 8)!.map((item, index) => (
+						<ForecastDataWrapper key={index}>
+							{index === 0 ? (
+								<>
+									<WeatherTime>Now</WeatherTime>
+									<ForecastCurrentData>
+										{item.icon}
+									<ForecastTemperature>
+										{item.temperature.toFixed()}°
+									</ForecastTemperature>
+								</ForecastCurrentData>
+								</>
+							) : (
+								<>
+									<WeatherTime>{item.time}</WeatherTime>
+									<ForecastOtherData>
+										{item.icon}
+										<ForecastTemperature>
+											{item.temperature.toFixed()}°
+										</ForecastTemperature>
+									</ForecastOtherData>
+								</>
+							)}
+						</ForecastDataWrapper>
+					))}
 				</HourlyForecastContainer>
 			</WeatherDisplayContainer>
 			<Divide />
