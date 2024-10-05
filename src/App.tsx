@@ -2,8 +2,7 @@ import {
 	Navbar,
 	SearchInput,
 	TempToggler,
-	WeatherDetails,
-	WeatherDisplay,
+	WeatherInfo
 } from './components'
 
 const App: React.FC = () => {
@@ -13,8 +12,7 @@ const App: React.FC = () => {
 				<SearchInput />
 				<TempToggler />
 			</Navbar>
-			<WeatherDisplay />
-			<WeatherDetails />
+			<WeatherInfo />
 		</>
 	)
 }

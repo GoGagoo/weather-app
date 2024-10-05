@@ -7,7 +7,7 @@ const TempTogglerContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	`
+`
 
 const TempTogglerBtn = styled.button`
 	padding: 8px 36px;
