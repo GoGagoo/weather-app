@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components';
 
 const NavbarContainer = styled.nav`
@@ -9,8 +8,6 @@ const NavbarContainer = styled.nav`
 	align-items: center;
 `
 
-export const Navbar = ({ children }: { children: React.ReactNode }) => {
-	return (
-		<NavbarContainer>{children}</NavbarContainer>
-	)
-}
+export const Navbar = ({ children }: { children: React.ReactNode }) => (
+	<NavbarContainer>{children}</NavbarContainer>
+)

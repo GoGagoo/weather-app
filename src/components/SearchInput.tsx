@@ -1,8 +1,8 @@
 import { Search } from 'lucide-react'
-import React, { useState } from 'react'
 import styled from 'styled-components'
 import { WEATHER_API_KEY } from '../constants/constants'
 import { api } from '../api'
+import { useState } from 'react'
 
 const SearchInputContainer = styled.div`
 	display: flex;

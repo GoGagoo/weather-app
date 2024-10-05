@@ -1,4 +1,3 @@
-import React from 'react'
 import {
 	Navbar,
 	SearchInput,
@@ -9,14 +8,14 @@ import {
 
 const App: React.FC = () => {
 	return (
-		<div>
+		<>
 			<Navbar>
 				<SearchInput />
 				<TempToggler />
 			</Navbar>
 			<WeatherDisplay />
 			<WeatherDetails />
-		</div>
+		</>
 	)
 }
 

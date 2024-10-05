@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getWeatherData } from '../api'
 import { WEATHER_API_KEY } from '../constants/constants'

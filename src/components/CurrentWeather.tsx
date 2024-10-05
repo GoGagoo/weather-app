@@ -1,5 +1,4 @@
 import { MapPin, Snowflake } from 'lucide-react'
-import React from 'react'
 import styled from 'styled-components'
 
 const CurrentWeatherBlock = styled.div`
