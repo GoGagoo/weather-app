@@ -1,8 +1,8 @@
-import axios from 'axios'
 import { Search } from 'lucide-react'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { BASE_URL, WEATHER_API_KEY } from '../constants/constants'
+import { WEATHER_API_KEY } from '../constants/constants'
+import { api } from '../api'
 
 const SearchInputContainer = styled.div`
 	display: flex;
@@ -33,27 +33,37 @@ export const SearchInput = () => {
 	const [data, setData] = useState({})
 	const [location, setLocation] = useState('')
 
-	const searchLocation = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+	const weatherUnit = 'metric'
+
+	const getWeatherDataBySearch  = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			try {
-				await axios
-					.get(`${BASE_URL}/weather?q=${location}&appid=${WEATHER_API_KEY}`)
-					.then((res) => {
-						setData(res.data)
-						console.log(res.data)
-					})
-			} catch (err) {
-				console.log('Error: ', err)
+				const { data } = await api.get(
+					`weather?q=${location}&units=${weatherUnit}&appid=${WEATHER_API_KEY}`
+				)
+		
+				const lat = data.coord.lat
+				const lon = data.coord.lon
+		
+				const weatherDataCall = await api.get(
+					`onecall?lat=${lat}&lon=${lon}&units=${weatherUnit}&appid=${WEATHER_API_KEY}`
+				)
+		
+				console.log(weatherDataCall)
+				return weatherDataCall
+			} catch (error) {
+				console.error(error)
+				return {}
 			}
-			setLocation('')
 		}
 	}
+
 
 	return (
 		<SearchInputContainer>
 			<SearchInputField
 				value={location}
-				onKeyDown={searchLocation}
+				onKeyDown={getWeatherDataBySearch}
 				onChange={(e) => setLocation(e.target.value)}
 				type='search'
 				placeholder='E.g Yerevan'

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	ArrowDownToLine,
 	Droplet,
@@ -10,9 +10,10 @@ import {
 	Wind,
 } from 'lucide-react'
 import styled from 'styled-components'
+import { getWeatherData } from '../api'
+import { WEATHER_API_KEY } from '../constants/constants'
 
-export const WeatherDetails = () => {
-	const Title = styled.div`
+const Title = styled.div`
 		font-size: 27px;
 		color: #ffffffe8;
 		margin: 32px 0 0 71px;
@@ -69,9 +70,38 @@ export const WeatherDetails = () => {
 	`
 
 	const DetailData = styled.p`
-		font-size: 32px;
+		font-size: 38px;
 		margin: 0;
 	`
+
+export const WeatherDetails = () => {
+	const [weatherData, setWeatherData] = useState<any>(null)
+	const [loading, setLoading] = useState<boolean>(true)
+
+	useEffect(() => {
+		const fetchWeather = async () => {
+			const data = await getWeatherData('Yerevan')
+			setWeatherData(data)
+			setLoading(false)
+		}
+		fetchWeather()
+	}, [])
+
+	if (loading) {
+		return <p>Loading weather data...</p>
+	}
+
+	if (!weatherData) {
+		return <p>Error loading weather data</p>
+	}
+
+	const { main } = weatherData
+
+	const wind = weatherData.wind.speed * 3.6
+	const feelsLikeInCelsius = (weatherData.main.feels_like).toFixed()
+	const sunrise = new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString('en-GB', { hour: 'numeric', hour12: true, minute: '2-digit' })
+	const sunset = new Date(weatherData.sys.sunset * 1000).toLocaleTimeString('en-GB', { hour: 'numeric', hour12: true, minute: '2-digit' })
+	const visibility = weatherData.visibility / 1000
 
 	return (
 		<>
@@ -81,7 +111,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>SUNRISE</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>06:47am</DetailData>
+							<DetailData>{sunrise}</DetailData>
 						</DetailDataWrapper>
 						<Sunrise size={54} />
 					</DataWrapper>
@@ -90,7 +120,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>SUNSET</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>05:04pm</DetailData>
+							<DetailData>{sunset}</DetailData>
 						</DetailDataWrapper>
 						<Sunset size={54} />
 					</DataWrapper>
@@ -99,7 +129,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>PRECIPITATION</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>60%</DetailData>
+							<DetailData>{weatherData.clouds.all}%</DetailData>
 						</DetailDataWrapper>
 						<Droplet size={54} />
 					</DataWrapper>
@@ -108,7 +138,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>HUMIDITY</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>15%</DetailData>
+							<DetailData>{main.humidity}%</DetailData>
 						</DetailDataWrapper>
 						<Droplets size={54} />
 					</DataWrapper>
@@ -117,7 +147,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>WIND</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>06:47</DetailData>
+							<DetailData>{wind} km/h</DetailData>
 						</DetailDataWrapper>
 						<Wind size={54} />
 					</DataWrapper>
@@ -126,7 +156,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>PRESSURE</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>06:47</DetailData>
+							<DetailData>{main.pressure} hPa</DetailData>
 						</DetailDataWrapper>
 						<ArrowDownToLine size={54} />
 					</DataWrapper>
@@ -135,7 +165,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>FEELS LIKE</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>06:47</DetailData>
+							<DetailData>{feelsLikeInCelsius}°C</DetailData>
 						</DetailDataWrapper>
 						<Thermometer size={54} />
 					</DataWrapper>
@@ -144,7 +174,7 @@ export const WeatherDetails = () => {
 					<DetailTitle>VISIBILITY</DetailTitle>
 					<DataWrapper>
 						<DetailDataWrapper>
-							<DetailData>06:47</DetailData>
+							<DetailData>{visibility} km</DetailData>
 						</DetailDataWrapper>
 						<Eye size={54} />
 					</DataWrapper>

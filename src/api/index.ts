@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { BASE_URL, WEATHER_API_KEY } from '../constants/constants'
 
-const api = axios.create({
+export const api = axios.create({
 	baseURL: BASE_URL,
 	params: {
 		units: 'metric',
