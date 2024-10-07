@@ -1,5 +1,5 @@
-import { MapPin, Snowflake } from 'lucide-react'
-import styled from 'styled-components'
+import { MapPin } from 'lucide-react'
+import styled, { keyframes } from 'styled-components'
 
 const CurrentWeatherBlock = styled.div`
 	display: flex;
@@ -14,6 +14,18 @@ const CurrentWeatherInfo = styled.div`
 	flex-direction: column;
 	align-items: center;
 	color: #ffffffe8;
+	opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  animation: fadeIn 1.5s forwards;
+
+	@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 `
 
 const CurrentWeatherDate = styled.div`

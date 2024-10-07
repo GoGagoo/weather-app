@@ -1,10 +1,22 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 const HourlyForecastContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 25px;
+	opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  animation: fadeIn 4s forwards;
+
+	@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 `
 
 const ForecastDataWrapper = styled.div`

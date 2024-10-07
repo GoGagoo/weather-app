@@ -8,7 +8,7 @@ import {
 	Thermometer,
 	Wind,
 } from 'lucide-react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 const Title = styled.div`
 	font-size: 27px;
@@ -21,6 +21,18 @@ const WeatherDetailsContainer = styled.div`
 	grid-template-columns: repeat(4, 1fr);
 	grid-gap: 17px;
 	margin: 40px 44px 100px 64px;
+	opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  animation: fadeIn 1.5s forwards;
+
+	@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 `
 
 const DetailBox = styled.div`
@@ -87,89 +99,55 @@ export const WeatherDetails: React.FC<Props> = ({ data }) => {
 		hour12: true,
 		minute: '2-digit',
 	})
-	
+
 	const wind = (data.wind.speed * 3.6).toFixed()
 
 	const feelsLikeInCelsius = data.main.feels_like.toFixed()
 
 	const visibility = data.visibility / 1000
 
+	const details = [
+		{ title: 'SUNRISE', value: sunrise, icon: <Sunrise size={54} /> },
+		{ title: 'SUNSET', value: sunset, icon: <Sunset size={54} /> },
+		{
+			title: 'PRECIPITATION',
+			value: `${data.clouds.all}%`,
+			icon: <Droplet size={54} />,
+		},
+		{
+			title: 'HUMIDITY',
+			value: `${main.humidity}%`,
+			icon: <Droplets size={54} />,
+		},
+		{ title: 'WIND', value: `${wind} km/h`, icon: <Wind size={54} /> },
+		{
+			title: 'PRESSURE',
+			value: `${main.pressure} hPa`,
+			icon: <ArrowDownToLine size={54} />,
+		},
+		{
+			title: 'FEELS LIKE',
+			value: `${feelsLikeInCelsius}°C`,
+			icon: <Thermometer size={54} />,
+		},
+		{ title: 'VISIBILITY', value: `${visibility} km`, icon: <Eye size={54} /> },
+	]
+
 	return (
 		<>
 			<Title>Weather Details</Title>
 			<WeatherDetailsContainer>
-				<DetailBox>
-					<DetailTitle>SUNRISE</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{sunrise}</DetailData>
-						</DetailDataWrapper>
-						<Sunrise size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>SUNSET</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{sunset}</DetailData>
-						</DetailDataWrapper>
-						<Sunset size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>PRECIPITATION</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{data.clouds.all}%</DetailData>
-						</DetailDataWrapper>
-						<Droplet size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>HUMIDITY</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{main.humidity}%</DetailData>
-						</DetailDataWrapper>
-						<Droplets size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>WIND</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{wind} km/h</DetailData>
-						</DetailDataWrapper>
-						<Wind size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>PRESSURE</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{main.pressure} hPa</DetailData>
-						</DetailDataWrapper>
-						<ArrowDownToLine size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>FEELS LIKE</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{feelsLikeInCelsius}°C</DetailData>
-						</DetailDataWrapper>
-						<Thermometer size={54} />
-					</DataWrapper>
-				</DetailBox>
-				<DetailBox>
-					<DetailTitle>VISIBILITY</DetailTitle>
-					<DataWrapper>
-						<DetailDataWrapper>
-							<DetailData>{visibility} km</DetailData>
-						</DetailDataWrapper>
-						<Eye size={54} />
-					</DataWrapper>
-				</DetailBox>
+				{details.map((detail, index) => (
+					<DetailBox key={index}>
+						<DetailTitle>{detail.title}</DetailTitle>
+						<DataWrapper>
+							<DetailDataWrapper>
+								<DetailData>{detail.value}</DetailData>
+							</DetailDataWrapper>
+							{detail.icon}
+						</DataWrapper>
+					</DetailBox>
+				))}
 			</WeatherDetailsContainer>
 		</>
 	)
