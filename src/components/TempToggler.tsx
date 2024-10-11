@@ -2,8 +2,6 @@ import { Slash } from 'lucide-react'
 import styled from 'styled-components'
 
 const TempTogglerContainer = styled.div`
-	width: 168px;
-	height: 38px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -24,22 +22,29 @@ const TempTogglerBtn = styled.button`
 	}
 `
 
-const TempTogglerLetters = styled.span`
+const CelsiusFirstLetter = styled.p`
+	display: flex;
+	font-size: 18px;
+	font-weight: bold;
+	margin-right: 5px; 
+	color: #23C5BA;
+`
+
+const FahrenheitFirstLetter = styled.p`
+	display: flex;
 	font-size: 18px;
 	font-weight: bold;
 	color: #13264A33;
-
-	&:hover {
-		color: rgb(230, 233, 238);
-		transition: 150ms;
-	}
+	margin-left: 5px; 
 `
 
 export const TempToggler = () => {
 	return (
 		<TempTogglerContainer>
 			<TempTogglerBtn>
-				<TempTogglerLetters>C  <Slash size={18} />  F</TempTogglerLetters>
+				<CelsiusFirstLetter>C</CelsiusFirstLetter>
+					<Slash size={18} />
+					<FahrenheitFirstLetter>F</FahrenheitFirstLetter>
 			</TempTogglerBtn>
 		</TempTogglerContainer>
 	)

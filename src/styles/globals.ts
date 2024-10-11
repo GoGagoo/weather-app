@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
+import './vars.scss'
 
 export const Global = createGlobalStyle`
 
@@ -13,12 +14,10 @@ html, body {
 }
 
 body {
-	border-color: 2px solid pink;
 	min-height: 95vh;
 	color: rgb(255, 255, 255);
 	font-family: 'HelveticaNeue-Roman', sans-serif;
-	background: linear-gradient(-45deg, #23a6d5, #23d5ab);
-	/* background: var(--bg-color); */
+	background: var(--bg-color);	
 	background-size: 400% 400%;
 	animation: gradient 15s ease infinite;
 }
@@ -41,5 +40,17 @@ body.dark {
 	100% {
 		background-position: 0% 50%;
 	}
+}
+
+@media (prefers-color-scheme: light) {
+  body.system {
+    --bg-color: var(--primary-bg-color);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body.system {
+    --bg-color: var(--darken-bg-color);
+  }
 }
 `

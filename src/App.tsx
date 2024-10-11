@@ -1,16 +1,27 @@
+import styled from 'styled-components'
 import {
 	Navbar,
 	SearchInput,
 	TempToggler,
-	WeatherInfo
+	WeatherInfo,
+	ThemeToggler
 } from './components'
+
+const Togglers = styled.div`
+	display: flex;
+	align-items: 'center';
+	gap: 20px;
+`
 
 const App: React.FC = () => {
 	return (
 		<>
 			<Navbar>
 				<SearchInput />
-				<TempToggler />
+				<Togglers>
+					<ThemeToggler />
+					<TempToggler />
+				</Togglers>
 			</Navbar>
 			<WeatherInfo />
 		</>
