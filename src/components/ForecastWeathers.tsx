@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 const HourlyForecastContainer = styled.div`
 	display: flex;
@@ -6,17 +6,17 @@ const HourlyForecastContainer = styled.div`
 	align-items: center;
 	gap: 25px;
 	opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  animation: fadeIn 4s forwards;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeIn 4s forwards;
 
 	@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 `
 
 const ForecastDataWrapper = styled.div`
@@ -33,7 +33,7 @@ const WeatherTime = styled.p`
 
 const ForecastCurrentData = styled.div`
 	display: flex;
-	background-color: #a5e8e9;
+	background-color: #477e80;
 	flex-direction: column;
 	align-items: center;
 	padding: 15px;
@@ -66,22 +66,31 @@ const ForecastOtherData = styled.div`
 `
 
 const ForecastTemperature = styled.p`
-	font-size: 20px;
+	font-size: 18px;
 	color: #ffffffe8;
 `
 
-interface Props {
-	forecast: {
-		time: string
-		icon: JSX.Element
-		temperature: number
-	}[]
+interface ForecastItem {
+	time: string
+	icon: JSX.Element
+	temperature: number
 }
 
-export const ForecastWeathers: React.FC<Props> = ({ forecast }) => {
+interface Props {
+	forecast: ForecastItem[]
+	unit: string
+}
+
+const formatTemperature = (temperature: number, unit: string) => {
+	return unit === 'metric'
+		? `${temperature.toFixed()}°C`
+		: `${((temperature * 9) / 5 + 32).toFixed()}°F`
+}
+
+export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 	return (
 		<HourlyForecastContainer>
-			{forecast.slice(0, 8)!.map((item, index) => (
+			{forecast.slice(0, 8).map((item, index) => (
 				<ForecastDataWrapper key={index}>
 					{index === 0 ? (
 						<>
@@ -89,7 +98,7 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast }) => {
 							<ForecastCurrentData>
 								{item.icon}
 								<ForecastTemperature>
-									{item.temperature.toFixed()}°
+								{formatTemperature(item.temperature, unit)}
 								</ForecastTemperature>
 							</ForecastCurrentData>
 						</>
@@ -99,7 +108,7 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast }) => {
 							<ForecastOtherData>
 								{item.icon}
 								<ForecastTemperature>
-									{item.temperature.toFixed()}°
+								{formatTemperature(item.temperature, unit)}
 								</ForecastTemperature>
 							</ForecastOtherData>
 						</>

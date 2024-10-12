@@ -1,5 +1,7 @@
 import { Slash } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { TODOS_LOCAL_STORAGE_TEMP_UNIT } from '../constants/constants'
 
 const TempTogglerContainer = styled.div`
 	display: flex;
@@ -12,39 +14,72 @@ const TempTogglerBtn = styled.button`
 	border: none;
 	cursor: pointer;
 	border-radius: 20px;
+	border: 1px solid #ffffff56;
 	display: flex;
-  justify-content: center;
-	align-items: center; 
+	justify-content: center;
+	align-items: center;
 
 	&:hover {
-		background-color: rgb(230, 233, 238);
-		transition: 150ms;
+		background-color: transparent;
+		transition: background-color 350ms ease-in-out;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	&:active {
+		background-color: #ffffff82;
 	}
 `
 
-const CelsiusFirstLetter = styled.p`
+interface StyledProps {
+	active: boolean
+}
+
+const CelsiusFirstLetter = styled.p<StyledProps>`
 	display: flex;
 	font-size: 18px;
 	font-weight: bold;
-	margin-right: 5px; 
-	color: #23C5BA;
+	margin-right: 5px;
+	color: ${({ active }) => (active ? '#23C5BA' : '#23c5ba51')};
 `
 
-const FahrenheitFirstLetter = styled.p`
+const FahrenheitFirstLetter = styled.p<StyledProps>`
 	display: flex;
 	font-size: 18px;
 	font-weight: bold;
-	color: #13264A33;
-	margin-left: 5px; 
+	margin-left: 5px;
+	color: ${({ active }) => (active ? '#23C5BA' : '#23c5ba51')};
 `
+interface Props {
+	onUnitChange: (unit: string) => void
+}
 
-export const TempToggler = () => {
+export const TempToggler: React.FC<Props> = ({ onUnitChange }) => {
+	const [unit, setUnit] = useState<string>('metric')
+
+	useEffect(() => {
+		const savedUnit = localStorage.getItem(TODOS_LOCAL_STORAGE_TEMP_UNIT)
+		if (savedUnit) {
+			setUnit(savedUnit)
+		}
+	}, [])
+
+	useEffect(() => {
+		onUnitChange(unit)
+		localStorage.setItem(TODOS_LOCAL_STORAGE_TEMP_UNIT, unit)
+	}, [unit, onUnitChange])
+
+	const toggleUnit = () => {
+		setUnit((prevUnit) => (prevUnit === 'metric' ? 'imperial' : 'metric'))
+	}
+
 	return (
 		<TempTogglerContainer>
-			<TempTogglerBtn>
-				<CelsiusFirstLetter>C</CelsiusFirstLetter>
-					<Slash size={18} />
-					<FahrenheitFirstLetter>F</FahrenheitFirstLetter>
+			<TempTogglerBtn onClick={toggleUnit}>
+				<CelsiusFirstLetter active={unit === 'metric'}>C</CelsiusFirstLetter>
+				<Slash size={18} />
+				<FahrenheitFirstLetter active={unit === 'imperial'}>
+					F
+				</FahrenheitFirstLetter>
 			</TempTogglerBtn>
 		</TempTogglerContainer>
 	)

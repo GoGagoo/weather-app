@@ -6,6 +6,7 @@ import {
 	WeatherInfo,
 	ThemeToggler
 } from './components'
+import { useState } from 'react'
 
 const Togglers = styled.div`
 	display: flex;
@@ -14,16 +15,18 @@ const Togglers = styled.div`
 `
 
 const App: React.FC = () => {
+	const [unit, setUnit] = useState('metric')
+
 	return (
 		<>
 			<Navbar>
 				<SearchInput />
 				<Togglers>
 					<ThemeToggler />
-					<TempToggler />
+					<TempToggler onUnitChange={setUnit} />
 				</Togglers>
 			</Navbar>
-			<WeatherInfo />
+			<WeatherInfo unit={unit} />
 		</>
 	)
 }

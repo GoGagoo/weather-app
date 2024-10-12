@@ -31,7 +31,6 @@ const SearchInputField = styled.input`
 `
 
 export const SearchInput = () => {
-	const [data, setData] = useState({})
 	const [location, setLocation] = useState('')
 
 	const weatherUnit = 'metric'
@@ -61,12 +60,14 @@ export const SearchInput = () => {
 		}
 	}
 
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+		setLocation(e.target.value)
+
 	document.addEventListener('keydown', (event) => {
 		const anyDigitRegExp = /\d/
 
 		if (anyDigitRegExp.test(event.key)) {
 			event.preventDefault()
-			console.log('Отмена цифры: ', event.key)
 		}
 	})
 
@@ -75,7 +76,7 @@ export const SearchInput = () => {
 			<SearchInputField
 				value={location}
 				onKeyDown={getWeatherDataBySearch}
-				onChange={(e) => setLocation(e.target.value)}
+				onChange={onInputChange}
 				type='search'
 				placeholder='E.g Moscow'
 			/>

@@ -19,10 +19,11 @@ const Divide = styled.div`
 `
 
 interface Props {
-	data: any
+	data: any,
+	unit: string
 }
 
-export const WeatherDisplay: React.FC<Props> = ({ data }) => {
+export const WeatherDisplay: React.FC<Props> = ({ data, unit }) => {
 	const [forecastData, setForecastData] = useState<
 		{
 			temperature: number
@@ -54,17 +55,12 @@ export const WeatherDisplay: React.FC<Props> = ({ data }) => {
 			.catch((error) => console.error(error))
 	}, [])
 
-	if (!data) {
-		return <p>Error loading weather data</p>
-	}
-
 	const { main, name, dt, sys } = data
 
 	const cityName = name
 	const country = sys.country
 
 	const temperatureCelsius = main.temp
-	const temperatureFahrenheit = (temperatureCelsius * 9) / 5 + 32
 
 	const date = new Date(dt * 1000)
 	const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' })
@@ -82,7 +78,7 @@ export const WeatherDisplay: React.FC<Props> = ({ data }) => {
 					city={cityName}
 					country={country}
 				/>
-				<ForecastWeathers forecast={forecastData} />
+				<ForecastWeathers forecast={forecastData} unit={unit} />
 			</WeatherDisplayContainer>
 			<Divide />
 		</>
