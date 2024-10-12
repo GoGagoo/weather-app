@@ -39,7 +39,7 @@ const CelsiusFirstLetter = styled.p<StyledProps>`
 	font-size: 18px;
 	font-weight: bold;
 	margin-right: 5px;
-	color: ${({ active }) => (active ? '#23C5BA' : '#23c5ba51')};
+	color: ${({ active }) => (active ? '#23C5BA' : '#11625c9e')};
 `
 
 const FahrenheitFirstLetter = styled.p<StyledProps>`
