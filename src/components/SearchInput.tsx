@@ -38,7 +38,7 @@ export const SearchInput = () => {
 
 	const getWeatherDataBySearch = async (
 		e: React.KeyboardEvent<HTMLInputElement>
-	) => {
+	): Promise<ReturnType<typeof api.get>> => {
 		if (e.key === 'Enter') {
 			try {
 				const { data } = await api.get(
@@ -60,6 +60,15 @@ export const SearchInput = () => {
 			}
 		}
 	}
+
+	document.addEventListener('keydown', (event) => {
+		const anyDigitRegExp = /\d/
+
+		if (anyDigitRegExp.test(event.key)) {
+			event.preventDefault()
+			console.log('Отмена цифры: ', event.key)
+		}
+	})
 
 	return (
 		<SearchInputContainer>
