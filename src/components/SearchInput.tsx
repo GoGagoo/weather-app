@@ -4,12 +4,14 @@ import styled from 'styled-components'
 import { api } from '../api'
 import { WEATHER_API_KEY } from '../constants/constants'
 
-const SearchInputContainer = styled.div`
+const SearchInputContainer = styled.div<{ hasDigits: boolean }>`
 	display: flex;
 	align-items: center;
-	border-bottom: 2px solid #ffffffa6;
 	min-width: 148px;
 	width: 100%;
+	border-bottom: 2px solid
+		${(props) => (props.hasDigits ? 'red' : '#ffffff6e')};
+	transition: border-color 0.1s ease;
 `
 
 const SearchInputField = styled.input`
@@ -20,7 +22,7 @@ const SearchInputField = styled.input`
 	border: none;
 	outline: none;
 	background-color: transparent;
-
+		
 	&::placeholder {
 		color: rgb(255, 255, 255, 0.5);
 	}
@@ -32,6 +34,7 @@ const SearchInputField = styled.input`
 
 export const SearchInput = () => {
 	const [location, setLocation] = useState('')
+	const [hasDigits, setHasDigits] = useState(false)
 
 	const weatherUnit = 'metric'
 
@@ -60,19 +63,16 @@ export const SearchInput = () => {
 		}
 	}
 
-	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-		setLocation(e.target.value)
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const inputValue = e.target.value
+		setLocation(inputValue)
 
-	document.addEventListener('keydown', (event) => {
 		const anyDigitRegExp = /\d/
-
-		if (anyDigitRegExp.test(event.key)) {
-			event.preventDefault()
-		}
-	})
+		setHasDigits(anyDigitRegExp.test(inputValue))
+	}
 
 	return (
-		<SearchInputContainer>
+		<SearchInputContainer hasDigits={hasDigits}>
 			<SearchInputField
 				value={location}
 				onKeyDown={getWeatherDataBySearch}
@@ -80,7 +80,7 @@ export const SearchInput = () => {
 				type='search'
 				placeholder='E.g Moscow'
 			/>
-			<Search size={20} color='#ffffffa6' />
+			<Search size={20} color={hasDigits ? 'red' : '#ffffffa6'} />
 		</SearchInputContainer>
 	)
 }
