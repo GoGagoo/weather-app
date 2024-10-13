@@ -81,10 +81,13 @@ interface Props {
 	unit: string
 }
 
-const formatTemperature = (temperature: number, unit: string) => {
-	return unit === 'metric'
-		? `${temperature.toFixed()}°C`
-		: `${((temperature * 9) / 5 + 32).toFixed()}°F`
+const temperatureSymbols: { [key: string]: string } = {
+	metric: '°C',
+	imperial: '°F',
+}
+
+const formatTemperature = (temp: number, unit: string) => {
+	return `${temp.toFixed()}${temperatureSymbols[unit] || '°C'}`
 }
 
 export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
@@ -108,7 +111,7 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 							<ForecastOtherData>
 								{item.icon}
 								<ForecastTemperature>
-								{formatTemperature(item.temperature, unit)}
+									{formatTemperature(item.temperature, unit)}
 								</ForecastTemperature>
 							</ForecastOtherData>
 						</>

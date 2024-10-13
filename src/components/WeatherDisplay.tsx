@@ -19,41 +19,52 @@ const Divide = styled.div`
 `
 
 interface Props {
-	data: any,
+	data: any
 	unit: string
 }
 
+type ForecastData = {
+	temperature: number
+	time: string
+	icon: JSX.Element
+}
+
 export const WeatherDisplay: React.FC<Props> = ({ data, unit }) => {
-	const [forecastData, setForecastData] = useState<
-		{
-			temperature: number
-			time: string
-			icon: JSX.Element
-		}[]
-	>([])
+	const [forecastData, setForecastData] = useState<ForecastData[]>([])
 
 	useEffect(() => {
 		fetch(
-			`https://api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=${WEATHER_API_KEY}`
+			`https://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=${WEATHER_API_KEY}`
 		)
 			.then((res) => res.json())
 			.then((data) => {
-				const forecastData = data.list.map((item: any) => ({
-					time: new Date(item.dt * 1000)
-						.toLocaleTimeString('en-GB', { hour: 'numeric', hour12: true })
-						.toLowerCase(),
-					temperature: Math.round(item.main.temp - 273.15),
-					icon: (
-						<img
-							src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
-							alt={item.weather[0].description}
-						/>
-					),
-				}))
-				setForecastData(forecastData)
+				const lat = data.coord.lat
+				const lon = data.coord.lon
+
+				fetch(
+					`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&units=${unit}&appid=${WEATHER_API_KEY}`
+				)
+					.then((res) => res.json())
+					.then((weatherData) => {
+						const forecast = weatherData.hourly.map((item: any) => ({
+							time: new Date(item.dt * 1000).toLocaleTimeString('en-GB', {
+								hour: 'numeric',
+								hour12: true,
+							}),
+							temperature: Math.round(item.temp),
+							icon: (
+								<img
+									src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+									alt={item.weather[0].description}
+								/>
+							),
+						}))
+						setForecastData(forecast)
+					})
+					.catch((error) => console.error(error))
 			})
 			.catch((error) => console.error(error))
-	}, [])
+	}, [unit])
 
 	const { main, name, dt, sys } = data
 
