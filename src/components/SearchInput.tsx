@@ -4,13 +4,12 @@ import styled from 'styled-components'
 import { api } from '../api'
 import { WEATHER_API_KEY } from '../constants/constants'
 
-const SearchInputContainer = styled.div<{ hasDigits: boolean }>`
+const SearchInputContainer = styled.div<{ hasdigits: boolean | undefined }>`
 	display: flex;
 	align-items: center;
 	min-width: 148px;
 	width: 100%;
-	border-bottom: 2px solid
-		${(props) => (props.hasDigits ? 'red' : '#ffffff6e')};
+	border-bottom: 2px solid ${(props) => (props.hasdigits ? 'red' : '#ffffff6e')};
 	transition: border-color 0.1s ease;
 `
 
@@ -22,7 +21,7 @@ const SearchInputField = styled.input`
 	border: none;
 	outline: none;
 	background-color: transparent;
-		
+
 	&::placeholder {
 		color: rgb(255, 255, 255, 0.5);
 	}
@@ -72,7 +71,7 @@ export const SearchInput = () => {
 	}
 
 	return (
-		<SearchInputContainer hasDigits={hasDigits}>
+		<SearchInputContainer hasdigits={hasDigits ? true : undefined}>
 			<SearchInputField
 				value={location}
 				onKeyDown={getWeatherDataBySearch}

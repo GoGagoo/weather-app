@@ -31,7 +31,7 @@ const TempTogglerBtn = styled.button`
 `
 
 interface StyledProps {
-	active: boolean
+	$isactive: 'true' | 'false'
 }
 
 const CelsiusFirstLetter = styled.p<StyledProps>`
@@ -39,7 +39,7 @@ const CelsiusFirstLetter = styled.p<StyledProps>`
 	font-size: 18px;
 	font-weight: bold;
 	margin-right: 5px;
-	color: ${({ active }) => (active ? '#23C5BA' : '#11625c9e')};
+	color: ${({ $isactive }) => ($isactive === 'true' ? '#23C5BA' : '#11625c9e')};
 `
 
 const FahrenheitFirstLetter = styled.p<StyledProps>`
@@ -47,8 +47,9 @@ const FahrenheitFirstLetter = styled.p<StyledProps>`
 	font-size: 18px;
 	font-weight: bold;
 	margin-left: 5px;
-	color: ${({ active }) => (active ? '#23C5BA' : '#23c5ba51')};
+	color: ${({ $isactive }) => ($isactive === 'true' ? '#23C5BA' : '#23c5ba51')};
 `
+
 interface Props {
 	onUnitChange: (unit: string) => void
 }
@@ -72,12 +73,17 @@ export const TempToggler: React.FC<Props> = ({ onUnitChange }) => {
 		setUnit((prevUnit) => (prevUnit === 'metric' ? 'imperial' : 'metric'))
 	}
 
+	const activeCelsiusUnitProp = unit === 'metric' ? 'true' : 'false'
+	const activeFahrenheitUnitProp = unit === 'imperial' ? 'true' : 'false'
+
 	return (
 		<TempTogglerContainer>
 			<TempTogglerBtn onClick={toggleUnit}>
-				<CelsiusFirstLetter active={unit === 'metric'}>C</CelsiusFirstLetter>
+				<CelsiusFirstLetter $isactive={activeCelsiusUnitProp}>
+					C
+				</CelsiusFirstLetter>
 				<Slash size={18} />
-				<FahrenheitFirstLetter active={unit === 'imperial'}>
+				<FahrenheitFirstLetter $isactive={activeFahrenheitUnitProp}>
 					F
 				</FahrenheitFirstLetter>
 			</TempTogglerBtn>
