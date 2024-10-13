@@ -2,33 +2,7 @@ import { Slash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { TODOS_LOCAL_STORAGE_TEMP_UNIT } from '../constants/constants'
-
-const TempTogglerContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`
-
-const TempTogglerBtn = styled.button`
-	padding: 8px 36px;
-	border: none;
-	cursor: pointer;
-	border-radius: 20px;
-	border: 1px solid #ffffff56;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	&:hover {
-		background-color: transparent;
-		transition: background-color 350ms ease-in-out;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	}
-
-	&:active {
-		background-color: #ffffff82;
-	}
-`
+import { Button } from '../uikit'
 
 interface StyledProps {
 	$isactive: 'true' | 'false'
@@ -39,7 +13,7 @@ const CelsiusFirstLetter = styled.p<StyledProps>`
 	font-size: 18px;
 	font-weight: bold;
 	margin-right: 5px;
-	color: ${({ $isactive }) => ($isactive === 'true' ? '#23C5BA' : '#11625c9e')};
+	color: ${({ $isactive }) => ($isactive === 'true' ? '#1da49b' : '#808e8c')};
 `
 
 const FahrenheitFirstLetter = styled.p<StyledProps>`
@@ -47,7 +21,7 @@ const FahrenheitFirstLetter = styled.p<StyledProps>`
 	font-size: 18px;
 	font-weight: bold;
 	margin-left: 5px;
-	color: ${({ $isactive }) => ($isactive === 'true' ? '#23C5BA' : '#23c5ba51')};
+	color: ${({ $isactive }) => ($isactive === 'true' ? '#23C5BA' : '#808e8c')};
 `
 
 interface Props {
@@ -77,16 +51,14 @@ export const TempToggler: React.FC<Props> = ({ onUnitChange }) => {
 	const activeFahrenheitUnitProp = unit === 'imperial' ? 'true' : 'false'
 
 	return (
-		<TempTogglerContainer>
-			<TempTogglerBtn onClick={toggleUnit}>
-				<CelsiusFirstLetter $isactive={activeCelsiusUnitProp}>
-					C
-				</CelsiusFirstLetter>
-				<Slash size={18} />
-				<FahrenheitFirstLetter $isactive={activeFahrenheitUnitProp}>
-					F
-				</FahrenheitFirstLetter>
-			</TempTogglerBtn>
-		</TempTogglerContainer>
+		<Button onClick={toggleUnit}>
+			<CelsiusFirstLetter $isactive={activeCelsiusUnitProp}>
+				C
+			</CelsiusFirstLetter>
+			<Slash size={18} />
+			<FahrenheitFirstLetter $isactive={activeFahrenheitUnitProp}>
+				F
+			</FahrenheitFirstLetter>
+		</Button>
 	)
 }

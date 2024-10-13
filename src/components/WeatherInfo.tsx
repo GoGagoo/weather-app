@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getWeatherData } from '../api'
-import { Spinner } from '../uikit'
+import { Loader } from '../uikit'
 import { NotFound } from './NotFound'
 import { WeatherDetails } from './WeatherDetails'
 import { WeatherDisplay } from './WeatherDisplay'
@@ -23,7 +23,7 @@ export const WeatherInfo: React.FC<Props> = ({ unit }) => {
 		fetchWeather()
 	}, [unit])
 
-	if (loading) return <Spinner />
+	if (loading) return <Loader />
 
 	if (!weatherData) return <NotFound />
 

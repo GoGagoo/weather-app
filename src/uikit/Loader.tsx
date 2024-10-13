@@ -23,7 +23,7 @@ const drop = keyframes`
   }
 `
 
-const SpinnerWrapper = styled.div`
+const LoaderWrapper = styled.div`
 	position: absolute;
 	margin-left: -55px;
 	margin-top: -100px;
@@ -39,7 +39,7 @@ const Svg = styled.svg`
 `
 
 const CloudSvg = styled(Svg)`
-	z-index: 50; 
+	z-index: 50;
 `
 
 const SunSvg = styled(Svg)`
@@ -100,9 +100,9 @@ const Text = styled.div`
 	width: 200px;
 `
 
-export const Spinner = () => {
+export const Loader = () => {
 	return (
-		<SpinnerWrapper>
+		<LoaderWrapper>
 			<SunSvg viewBox='0 0 10 10'>
 				<g>
 					<SunCore cx='5' cy='5' r='2.5' />
@@ -130,6 +130,6 @@ export const Spinner = () => {
 			</RainWrapper>
 
 			<Text>LOOKING OUTSIDE FOR YOU... ONE SEC</Text>
-		</SpinnerWrapper>
+		</LoaderWrapper>
 	)
 }
