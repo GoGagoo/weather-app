@@ -21,6 +21,7 @@ const Divide = styled.div`
 interface Props {
 	data: any
 	unit: string
+	city: string
 }
 
 type ForecastData = {
@@ -29,42 +30,55 @@ type ForecastData = {
 	icon: JSX.Element
 }
 
-export const WeatherDisplay: React.FC<Props> = ({ data, unit }) => {
+export const WeatherDisplay: React.FC<Props> = ({ data, unit, city }) => {
 	const [forecastData, setForecastData] = useState<ForecastData[]>([])
 
 	useEffect(() => {
-		fetch(
-			`https://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=${WEATHER_API_KEY}`
-		)
-			.then((res) => res.json())
-			.then((data) => {
+		const fetchWeatherData = async () => {
+			try {
+				const res = await fetch(
+					`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`
+				)
+				const data = await res.json()
+
+				if (!data.coord) {
+					throw new Error('Не удалось получить координаты.')
+				}
+
 				const lat = data.coord.lat
 				const lon = data.coord.lon
 
-				fetch(
+				const weatherResponse = await fetch(
 					`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&units=${unit}&appid=${WEATHER_API_KEY}`
 				)
-					.then((res) => res.json())
-					.then((weatherData) => {
-						const forecast = weatherData.hourly.map((item: any) => ({
-							time: new Date(item.dt * 1000).toLocaleTimeString('en-GB', {
-								hour: 'numeric',
-								hour12: true,
-							}),
-							temperature: Math.round(item.temp),
-							icon: (
-								<img
-									src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
-									alt={item.weather[0].description}
-								/>
-							),
-						}))
-						setForecastData(forecast)
-					})
-					.catch((error) => console.error(error))
-			})
-			.catch((error) => console.error(error))
-	}, [unit])
+				const weatherData = await weatherResponse.json()
+
+				const forecast = weatherData.hourly.map((item: any) => ({
+					time: new Date(item.dt * 1000).toLocaleTimeString('en-GB', {
+						hour: 'numeric',
+						hour12: true,
+					}),
+					temperature: Math.round(item.temp),
+					icon: (
+						<img
+							src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+							alt={item.weather[0].description}
+						/>
+					),
+				}))
+
+				setForecastData(forecast)
+			} catch (error) {
+				console.error(error)
+			}
+		}
+
+		fetchWeatherData()
+	}, [unit, city])
+
+	if (!data || !data.main || !data.sys) {
+		return <div>Загрузка данных о погоде...</div>
+	}
 
 	const { main, name, dt, sys } = data
 

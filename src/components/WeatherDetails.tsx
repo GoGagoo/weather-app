@@ -8,7 +8,8 @@ import {
 	Thermometer,
 	Wind,
 } from 'lucide-react'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
+import { Loader } from '../uikit'
 
 const Title = styled.div`
 	font-size: 27px;
@@ -22,17 +23,17 @@ const WeatherDetailsContainer = styled.div`
 	grid-gap: 17px;
 	margin: 40px 44px 100px 64px;
 	opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  animation: fadeIn 1.5s forwards;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeIn 1.5s forwards;
 
 	@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 `
 
 const DetailBox = styled.div`
@@ -83,11 +84,34 @@ const DetailData = styled.p`
 	margin: 0;
 `
 
+interface WeatherData {
+	main: {
+		humidity: number
+		pressure: number
+		feels_like: number
+	}
+	sys: {
+		sunrise: number
+		sunset: number
+	}
+	wind: {
+		speed: number
+	}
+	visibility: number
+	clouds: {
+		all: number
+	}
+}
+
 interface Props {
-	data: any
+	data: WeatherData | null
 }
 
 export const WeatherDetails: React.FC<Props> = ({ data }) => {
+	if (!data || !data.sys) {
+		return <Loader />
+	}
+
 	const { main } = data
 
 	const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString(
