@@ -25,6 +25,12 @@ const Btn = styled.button`
 	&:active {
 		background-color: #ffffff82;
 	}
+
+	&:focus {
+		border: 1px solid #1da49b;
+		transition: 150ms ease-in;
+		outline: none;
+	}
 `
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {

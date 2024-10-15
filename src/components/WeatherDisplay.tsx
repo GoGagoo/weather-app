@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { WEATHER_API_KEY } from '../constants/constants'
 import { CurrentWeather } from './CurrentWeather'
 import { ForecastWeathers } from './ForecastWeathers'
+import { Loader } from '../uikit'
 
 const WeatherDisplayContainer = styled.div`
 	margin: 90px 44px 96px 34px;
@@ -77,7 +78,7 @@ export const WeatherDisplay: React.FC<Props> = ({ data, unit, city }) => {
 	}, [unit, city])
 
 	if (!data || !data.main || !data.sys) {
-		return <div>Загрузка данных о погоде...</div>
+		return <Loader />
 	}
 
 	const { main, name, dt, sys } = data

@@ -12,9 +12,8 @@ const SelectTag = styled.select`
 	font-size: 18px;
 	line-height: 1.5;
 	text-align: left;
-	border: 1px solid #ffffff56;
+	border: 1px solid #e2d8d89a;
 	border-radius: 20px;
-	outline: none;
 
 	&:hover {
 		background-color: #ffffff56;
@@ -24,6 +23,12 @@ const SelectTag = styled.select`
 	&:disabled {
 		cursor: not-allowed;
 		background-color: #433e9f;
+	}
+
+	&:focus {
+		border: 1px solid #d6d5d5;
+		transition: 150ms ease-in;
+		outline: none;
 	}
 `
 

@@ -1,8 +1,9 @@
 import { Search } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { api } from '../api'
 import { WEATHER_API_KEY } from '../constants/constants'
+import { SearchResultList } from './SearchResultList'
 
 const SearchInputContainer = styled.div<{
 	hasdigits: boolean | undefined
@@ -47,6 +48,11 @@ const ErrorMessage = styled.div`
 	transition: 0.1s ease;
 `
 
+interface City {
+	name: string
+	country: string
+}
+
 interface Props {
 	onSearch: (city: string) => void
 }
@@ -56,6 +62,8 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 	const [hasDigits, setHasDigits] = useState(false)
 	const [errorCity, setErrorCity] = useState<string | null>(null)
 	const [errorDigit, setErrorDigit] = useState<string | null>(null)
+	const [searchResults, setSearchResults] = useState<City[]>([])
+	const [showResults, setShowResults] = useState(false)
 
 	const weatherUnit = 'metric'
 
@@ -79,13 +87,25 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 				setLocation('')
 				setErrorCity(null)
 				setErrorDigit(null)
+				setShowResults(false)
 				return weatherDataCall
 			} catch (error) {
 				console.error(error)
 				setErrorCity('City not found. Please try again.')
 				setErrorDigit(null)
+				setSearchResults([])
 				return {}
 			}
+		}
+	}
+
+	const fetchCitySuggestions = async (query: string) => {
+		try {
+			const { data } = await api.get(`find?q=${query}&appid=${WEATHER_API_KEY}`)
+			setSearchResults(data.list.map((city: any) => ({ name: city.name, country: city.sys.country })))
+			setShowResults(true)
+		} catch (error) {
+			console.error(error)
 		}
 	}
 
@@ -98,10 +118,44 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 			setHasDigits(true)
 			setErrorDigit('Enter the name of the city, no numbers allowed.')
 			setErrorCity(null)
+			setSearchResults([])
 		} else {
 			setHasDigits(false)
 			setErrorDigit(null)
+			if (inputValue.length > 3) {
+				fetchCitySuggestions(inputValue)
+			} else {
+				setSearchResults([])
+				setShowResults(false)
+			}
 		}
+	}
+
+	useEffect(() => {
+		const debounceTimeout = setTimeout(() => {
+			// Выполняем поиск только если в инпуте более 2 символов
+			if (location.length > 3 && !hasDigits) {
+				fetchCitySuggestions(location)
+			} else {
+				setSearchResults([])
+				setShowResults(false)
+			}
+		}, 500) // Задержка в 500 мс
+	
+		// Очищаем таймер перед установкой нового
+		return () => clearTimeout(debounceTimeout)
+	}, [location, hasDigits])
+	
+
+	const handleSelectCity = (city: string) => {
+		onSearch(city)
+		setLocation(city)
+		setSearchResults([])
+		setShowResults(false)
+	}
+
+	const handleCloseList = () => {
+		setShowResults(false)
 	}
 
 	return (
@@ -119,6 +173,13 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 			<Search size={20} color={hasDigits || errorCity ? 'red' : '#ffffffa6'} />
 			{errorCity && <ErrorMessage>{errorCity}</ErrorMessage>}
 			{hasDigits && <ErrorMessage>{errorDigit}</ErrorMessage>}
+			{showResults && searchResults.length > 0 && location.length > 0 && (
+				<SearchResultList
+					results={searchResults}
+					onSelect={handleSelectCity}
+					onCloseList={handleCloseList}
+				/>
+			)}
 		</SearchInputContainer>
 	)
 }
