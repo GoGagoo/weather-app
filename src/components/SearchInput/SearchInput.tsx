@@ -152,7 +152,7 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 
 	return (
 		<SearchInputContainer
-			errorcity={!!errorCity}
+			$errorcity={!!errorCity}
 			hasdigits={hasDigits ? true : undefined}
 		>
 			<SearchInputField

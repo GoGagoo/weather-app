@@ -52,7 +52,7 @@ export const SearchResultList: React.FC<Props> = ({
 			{results.map((result, index) => (
 				<SearchResultItem
 					key={index}
-					isSelected={index === highlightedIndex}
+					$isSelected={index === highlightedIndex}
 					onClick={() => onSelect(result.name)}
 				>
 					{result.name}

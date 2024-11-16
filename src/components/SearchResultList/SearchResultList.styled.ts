@@ -11,11 +11,11 @@ const SearchResultListContainer = styled.div`
 	width: 100%;
 `
 
-const SearchResultItem = styled.div<{ isSelected: boolean }>`
+const SearchResultItem = styled.div<{ $isSelected: boolean }>`
 	padding: 10px;
 	cursor: pointer;
-	background-color: ${({ isSelected }) =>
-		isSelected ? '#7eb2fb' : 'transparent'};
+	background-color: ${({ $isSelected }) =>
+		$isSelected ? '#7eb2fb' : 'transparent'};
 	color: black;
 	&:hover {
 		background-color: #4b91f3;

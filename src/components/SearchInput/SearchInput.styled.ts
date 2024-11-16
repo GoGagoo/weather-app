@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const SearchInputContainer = styled.div<{
 	hasdigits: boolean | undefined
-	errorcity: boolean
+	$errorcity: boolean
 }>`
 	display: flex;
 	align-items: center;
@@ -10,7 +10,7 @@ const SearchInputContainer = styled.div<{
 	width: 100%;
 	border-bottom: 2px solid
 		${(props) =>
-			props.hasdigits ? 'red' : props.errorcity ? 'red' : '#ffffff6e'};
+			props.hasdigits ? 'red' : props.$errorcity ? 'red' : '#ffffff6e'};
 	transition: border-color 0.1s ease;
 	position: relative;
 `
