@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 import { getWeatherData } from './api'
+import { Togglers } from './App.styled'
 import {
 	Navbar,
 	SearchInput,
@@ -8,9 +8,13 @@ import {
 	ThemeToggler,
 	WeatherInfo,
 } from './components'
+import {
+	GEOCODING_URL,
+	NOMINATIM_URL,
+	OPEN_METEO_FORECAST_URL,
+} from './constants/constants'
 import { WeatherData } from './types/WeatherData'
 import { Loader } from './uikit'
-import { Togglers } from './App.styled'
 
 const App: React.FC = () => {
 	const [unit, setUnit] = useState('celsius')
@@ -55,7 +59,7 @@ const App: React.FC = () => {
 
 		try {
 			const geoResponse = await fetch(
-				`https://geocoding-api.open-meteo.com/v1/search?name=${newCity}&count=1&language=en`
+				`${GEOCODING_URL}?name=${newCity}&count=1&language=en`
 			)
 
 			const geoData = await geoResponse.json()
@@ -64,7 +68,6 @@ const App: React.FC = () => {
 				throw new Error('Город не найден.')
 			}
 
-
 			const { name, latitude, longitude, timezone } = geoData.results[0]
 			setCity(name)
 			setLatitude(latitude)
@@ -72,7 +75,7 @@ const App: React.FC = () => {
 			setTimezone(timezone)
 
 			const weatherResponse = await fetch(
-				`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
+				`${OPEN_METEO_FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
 					timezone || 'auto'
 				}&temperature_unit=${unit}`
 			)
@@ -91,7 +94,7 @@ const App: React.FC = () => {
 	const fetchCityName = async (lat: number, lon: number): Promise<string> => {
 		try {
 			const response = await fetch(
-				`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=en`
+				`${NOMINATIM_URL}?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=en`
 			)
 
 			if (!response.ok) {

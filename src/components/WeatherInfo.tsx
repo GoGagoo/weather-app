@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { OPEN_METEO_FORECAST_URL } from '../constants/constants'
 import { WeatherData as WeatherDataType } from '../types/WeatherData'
 import { Loader } from '../uikit'
 import { NotFound } from './NotFound/NotFound'
@@ -30,7 +31,7 @@ export const WeatherInfo: React.FC<Props> = ({
 			setLoading(true)
 			try {
 				const response = await fetch(
-					`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
+					`${OPEN_METEO_FORECAST_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
 						timezone || 'auto'
 					}&temperature_unit=${unit}`
 				)

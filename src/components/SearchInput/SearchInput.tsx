@@ -1,5 +1,9 @@
 import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import {
+	GEOCODING_URL,
+	OPEN_METEO_FORECAST_URL,
+} from '../../constants/constants'
 import { SearchResultList } from '../SearchResultList/SearchResultList'
 import {
 	ErrorMessage,
@@ -30,9 +34,7 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 		if (e.key === 'Enter') {
 			try {
 				const cityToSearch = selectedCity || location
-				const geoResponse = await fetch(
-					`https://geocoding-api.open-meteo.com/v1/search?name=${cityToSearch}`
-				)
+				const geoResponse = await fetch(`${GEOCODING_URL}?name=${cityToSearch}`)
 
 				if (!geoResponse.ok) {
 					throw new Error('Ошибка сети при запросе города.')
@@ -47,7 +49,7 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 				const { latitude, longitude, timezone } = geoData.results[0]
 
 				const weatherResponse = await fetch(
-					`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=${
+					`${OPEN_METEO_FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=${
 						timezone || 'auto'
 					}`
 				)
@@ -77,9 +79,7 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 
 	const fetchCitySuggestions = async (query: string) => {
 		try {
-			const geoResponse = await fetch(
-				`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5`
-			)
+			const geoResponse = await fetch(`${GEOCODING_URL}?name=${query}&count=5`)
 
 			if (!geoResponse.ok) {
 				throw new Error('Ошибка сети при запросе подсказок.')
