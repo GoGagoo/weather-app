@@ -10,7 +10,7 @@ export const getWeatherData = async (latitude: number, longitude: number) => {
 				current_weather: true,
 				current:
 					'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m',
-				hourly: 'temperature_2m,visibility',
+				hourly: 'temperature_2m,visibility,weather_code',
 				daily: 'sunrise,sunset',
 				timezone: 'auto',
 			},

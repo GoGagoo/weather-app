@@ -31,7 +31,7 @@ export const WeatherInfo: React.FC<Props> = ({
 			setLoading(true)
 			try {
 				const response = await fetch(
-					`${OPEN_METEO_FORECAST_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
+					`${OPEN_METEO_FORECAST_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,weather_code,visibility&daily=sunrise,sunset&timezone=${
 						timezone || 'auto'
 					}&temperature_unit=${unit}`
 				)
