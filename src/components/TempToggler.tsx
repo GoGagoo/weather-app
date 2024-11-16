@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const TempToggler: React.FC<Props> = ({ onUnitChange }) => {
-	const [unit, setUnit] = useState<string>('metric')
+	const [unit, setUnit] = useState<string>('celsius')
 
 	useEffect(() => {
 		const savedUnit = localStorage.getItem(TODOS_LOCAL_STORAGE_TEMP_UNIT)
@@ -44,11 +44,11 @@ export const TempToggler: React.FC<Props> = ({ onUnitChange }) => {
 	}, [unit, onUnitChange])
 
 	const toggleUnit = () => {
-		setUnit((prevUnit) => (prevUnit === 'metric' ? 'imperial' : 'metric'))
+		setUnit((prevUnit) => (prevUnit === 'celsius' ? 'fahrenheit' : 'celsius'))
 	}
 
-	const activeCelsiusUnitProp = unit === 'metric' ? 'true' : 'false'
-	const activeFahrenheitUnitProp = unit === 'imperial' ? 'true' : 'false'
+	const activeCelsiusUnitProp = unit === 'celsius' ? 'true' : 'false'
+	const activeFahrenheitUnitProp = unit === 'fahrenheit' ? 'true' : 'false'
 
 	return (
 		<Button onClick={toggleUnit}>

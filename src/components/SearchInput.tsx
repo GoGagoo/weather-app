@@ -1,8 +1,6 @@
 import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { api } from '../api'
-import { WEATHER_API_KEY } from '../constants/constants'
 import { SearchResultList } from './SearchResultList'
 
 const SearchInputContainer = styled.div<{
@@ -50,7 +48,6 @@ const ErrorMessage = styled.div`
 
 interface City {
 	name: string
-	country: string
 }
 
 interface Props {
@@ -64,31 +61,49 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 	const [errorDigit, setErrorDigit] = useState<string | null>(null)
 	const [searchResults, setSearchResults] = useState<City[]>([])
 	const [showResults, setShowResults] = useState(false)
-
-	const weatherUnit = 'metric'
+	const [selectedCity, setSelectedCity] = useState<string | null>(null)
 
 	const getWeatherDataBySearch = async (
 		e: React.KeyboardEvent<HTMLInputElement>
-	): Promise<ReturnType<typeof api.get>> => {
+	) => {
 		if (e.key === 'Enter') {
 			try {
-				const { data } = await api.get(
-					`weather?q=${location}&units=${weatherUnit}&appid=${WEATHER_API_KEY}`
+				const cityToSearch = selectedCity || location
+				const geoResponse = await fetch(
+					`https://geocoding-api.open-meteo.com/v1/search?name=${cityToSearch}`
 				)
 
-				const lat = data.coord.lat
-				const lon = data.coord.lon
+				if (!geoResponse.ok) {
+					throw new Error('Ошибка сети при запросе города.')
+				}
 
-				const weatherDataCall = await api.get(
-					`onecall?lat=${lat}&lon=${lon}&units=${weatherUnit}&appid=${WEATHER_API_KEY}`
+				const geoData = await geoResponse.json()
+
+				if (!geoData.results || geoData.results.length === 0) {
+					throw new Error('Город не найден.')
+				}
+
+				const { latitude, longitude, timezone } = geoData.results[0]
+
+				const weatherResponse = await fetch(
+					`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=${
+						timezone || 'auto'
+					}`
 				)
 
-				onSearch(location)
+				if (!weatherResponse.ok) {
+					throw new Error('Ошибка сети при запросе погоды.')
+				}
+
+				const weatherData = await weatherResponse.json()
+
+				onSearch(cityToSearch)
 				setLocation('')
 				setErrorCity(null)
 				setErrorDigit(null)
 				setShowResults(false)
-				return weatherDataCall
+
+				return weatherData
 			} catch (error) {
 				console.error(error)
 				setErrorCity('City not found. Please try again.')
@@ -101,8 +116,26 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 
 	const fetchCitySuggestions = async (query: string) => {
 		try {
-			const { data } = await api.get(`find?q=${query}&appid=${WEATHER_API_KEY}`)
-			setSearchResults(data.list.map((city: any) => ({ name: city.name, country: city.sys.country })))
+			const geoResponse = await fetch(
+				`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5`
+			)
+
+			if (!geoResponse.ok) {
+				throw new Error('Ошибка сети при запросе подсказок.');
+			}
+
+			const geoData = await geoResponse.json()
+
+			if (!geoData.results || geoData.results.length === 0) {
+				setSearchResults([]);
+				return;
+			}
+
+			const suggestions = geoData.results.map((city: any) => ({
+				name: city.name,
+			}))
+			
+			setSearchResults(suggestions)
 			setShowResults(true)
 		} catch (error) {
 			console.error(error)
@@ -133,21 +166,19 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 
 	useEffect(() => {
 		const debounceTimeout = setTimeout(() => {
-			// Выполняем поиск только если в инпуте более 2 символов
 			if (location.length > 3 && !hasDigits) {
 				fetchCitySuggestions(location)
 			} else {
 				setSearchResults([])
 				setShowResults(false)
 			}
-		}, 500) // Задержка в 500 мс
-	
-		// Очищаем таймер перед установкой нового
+		}, 500)
+
 		return () => clearTimeout(debounceTimeout)
 	}, [location, hasDigits])
-	
 
-	const handleSelectCity = (city: string) => {
+	const handleSelectCity: any = (city: string) => {
+		setSelectedCity(city)
 		onSearch(city)
 		setLocation(city)
 		setSearchResults([])

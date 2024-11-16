@@ -73,7 +73,7 @@ const ForecastTemperature = styled.p`
 interface ForecastItem {
 	time: string
 	icon: JSX.Element
-	temperature: number
+	temperature_2m: number
 }
 
 interface Props {
@@ -81,16 +81,16 @@ interface Props {
 	unit: string
 }
 
-const temperatureSymbols: { [key: string]: string } = {
-	metric: '°C',
-	imperial: '°F',
-}
-
-const formatTemperature = (temp: number, unit: string) => {
-	return `${temp.toFixed()}${temperatureSymbols[unit] || '°C'}`
-}
-
 export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
+	const tempUnit = unit === 'celsius' ? 'C' : 'F'
+
+	const formatTemperature = (temp: number) => {
+		if (temp < 0 && temp > -1) {
+			return 0;
+		}
+		return temp;
+	}
+
 	return (
 		<HourlyForecastContainer>
 			{forecast.slice(0, 8).map((item, index) => (
@@ -101,7 +101,7 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 							<ForecastCurrentData>
 								{item.icon}
 								<ForecastTemperature>
-								{formatTemperature(item.temperature, unit)}
+								{formatTemperature(item.temperature_2m).toFixed()}°{tempUnit}
 								</ForecastTemperature>
 							</ForecastCurrentData>
 						</>
@@ -111,7 +111,7 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 							<ForecastOtherData>
 								{item.icon}
 								<ForecastTemperature>
-									{formatTemperature(item.temperature, unit)}
+								{formatTemperature(item.temperature_2m).toFixed()}°{tempUnit}
 								</ForecastTemperature>
 							</ForecastOtherData>
 						</>

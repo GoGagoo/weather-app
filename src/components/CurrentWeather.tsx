@@ -1,5 +1,5 @@
 import { MapPin } from 'lucide-react'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 const CurrentWeatherBlock = styled.div`
 	display: flex;
@@ -15,25 +15,30 @@ const CurrentWeatherInfo = styled.div`
 	align-items: center;
 	color: #ffffffe8;
 	opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  animation: fadeIn 1.5s forwards;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeIn 1.5s forwards;
 
 	@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 `
 
-const CurrentWeatherDate = styled.div`
+const Date = styled.div`
 	display: flex;
 	font-size: 27px;
 	flex-direction: column;
 	align-items: center;
 	color: #ffffffe8;
+`
+
+const UnderDate = styled.div`
+	margin-top: 10px;
+	font-size: 14px;
 `
 
 const Temperature = styled.h1`
@@ -46,13 +51,13 @@ const Temperature = styled.h1`
 	font-size: 90px;
 `
 
-const CityCountryWrapper = styled.div`
+const CityWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	gap: 15px;
 `
 
-const CityCountry = styled.p`
+const City = styled.p`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -64,27 +69,37 @@ const CityCountry = styled.p`
 
 interface Props {
 	city: string
-	country: string
-	temp: number
+	temp: number | null
 	date: string
+	unit: string | undefined
 }
 
-export const CurrentWeather: React.FC<Props> = ({ city, country, temp, date }) => {
+export const CurrentWeather: React.FC<Props> = ({
+	city,
+	temp = null,
+	date,
+	unit = 'celsius',
+}) => {
+	const tempUnit = unit === 'celsius' ? 'C' : 'F'
+
+	const currentTemp = temp !== null ? temp : 0
+	const finalTemperature = currentTemp < 0 && currentTemp > -1 ? 0 : currentTemp
+	const displayTemperature = finalTemperature !== undefined ? finalTemperature.toFixed() : 'N/A'
+
 	return (
 		<CurrentWeatherInfo>
 			<CurrentWeatherBlock>
-				<CurrentWeatherDate>
+				<Date>
 					<p>Today</p>
-					<p style={{ fontSize: '14px' }}>{date}</p>
-				</CurrentWeatherDate>
+					<UnderDate>{date}</UnderDate>
+				</Date>
 			</CurrentWeatherBlock>
-			<Temperature>{temp.toFixed()}°</Temperature>
-			<CityCountryWrapper>
-				<MapPin size={24} />{' '}
-				<CityCountry>
-					{city}, {country}
-				</CityCountry>
-			</CityCountryWrapper>
+			<Temperature>
+				{displayTemperature}°{tempUnit}
+			</Temperature>
+			<CityWrapper>
+				<MapPin size={24} /> <City>{city}</City>
+			</CityWrapper>
 		</CurrentWeatherInfo>
 	)
 }

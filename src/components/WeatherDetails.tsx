@@ -9,7 +9,7 @@ import {
 	Wind,
 } from 'lucide-react'
 import styled from 'styled-components'
-import { Loader } from '../uikit'
+import { WeatherData } from '../types/WeatherData'
 
 const Title = styled.div`
 	font-size: 27px;
@@ -84,77 +84,79 @@ const DetailData = styled.p`
 	margin: 0;
 `
 
-interface WeatherData {
-	main: {
-		humidity: number
-		pressure: number
-		feels_like: number
-	}
-	sys: {
-		sunrise: number
-		sunset: number
-	}
-	wind: {
-		speed: number
-	}
-	visibility: number
-	clouds: {
-		all: number
-	}
-}
-
 interface Props {
 	data: WeatherData | null
+	unit: string | null
 }
 
-export const WeatherDetails: React.FC<Props> = ({ data }) => {
-	if (!data || !data.sys) {
-		return <Loader />
-	}
+export const WeatherDetails: React.FC<Props> = ({ data, unit }) => {
+	if (!data || !data.current || !data.hourly || !data.daily) return null
 
-	const { main } = data
+	const currentWeather = data.current
+	const hourlyWeather = data.hourly
+	const dailyWeather = data.daily
 
-	const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString(
-		'en-GB',
-		{ hour: '2-digit', hour12: true, minute: '2-digit' }
-	)
-	const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('en-GB', {
+	const sunriseTime = new Date(dailyWeather.sunrise[0]).toLocaleTimeString('en-GB', {
 		hour: '2-digit',
-		hour12: true,
 		minute: '2-digit',
+		hour12: false,
 	})
 
-	const wind = (data.wind.speed * 3.6).toFixed()
+	const sunsetTime = new Date(dailyWeather.sunset[0]).toLocaleTimeString('en-GB', {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false,
+	})
 
-	const feelsLikeInCelsius = data.main.feels_like.toFixed()
+	const wind = currentWeather.wind_speed_10m.toFixed()
+	const pressure = currentWeather.pressure_msl.toFixed()
 
-	const visibility = data.visibility / 1000
+	const feelsLike = currentWeather.apparent_temperature.toFixed()
+	const tempUnit = unit === 'celsius' ? 'C' : 'F'
+
+	const visibility = (hourlyWeather.visibility[0] / 1000).toFixed()
 
 	const details = [
-		{ title: 'SUNRISE', value: sunrise, icon: <Sunrise size={54} /> },
-		{ title: 'SUNSET', value: sunset, icon: <Sunset size={54} /> },
+		{
+			title: 'SUNRISE',
+			value: sunriseTime,
+			icon: <Sunrise size={54} />,
+		},
+		{
+			title: 'SUNSET',
+			value: sunsetTime,
+			icon: <Sunset size={54} />,
+		},
 		{
 			title: 'PRECIPITATION',
-			value: `${data.clouds.all}%`,
+			value: `${currentWeather.precipitation}%`,
 			icon: <Droplet size={54} />,
 		},
 		{
 			title: 'HUMIDITY',
-			value: `${main.humidity}%`,
+			value: `${currentWeather.relative_humidity_2m}%`,
 			icon: <Droplets size={54} />,
 		},
-		{ title: 'WIND', value: `${wind} km/h`, icon: <Wind size={54} /> },
+		{
+			title: 'WIND',
+			value: `${wind} km/h`,
+			icon: <Wind size={54} />,
+		},
 		{
 			title: 'PRESSURE',
-			value: `${main.pressure} hPa`,
+			value: `${pressure} hPa`,
 			icon: <ArrowDownToLine size={54} />,
 		},
 		{
 			title: 'FEELS LIKE',
-			value: `${feelsLikeInCelsius}°C`,
+			value: `${feelsLike}°${tempUnit}`,
 			icon: <Thermometer size={54} />,
 		},
-		{ title: 'VISIBILITY', value: `${visibility} km`, icon: <Eye size={54} /> },
+		{
+			title: 'VISIBILITY',
+			value: `${visibility} km`,
+			icon: <Eye size={54} />,
+		},
 	]
 
 	return (

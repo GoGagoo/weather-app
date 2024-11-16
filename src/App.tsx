@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { api } from './api'
+import { getWeatherData } from './api'
 import {
 	Navbar,
 	SearchInput,
@@ -8,115 +8,163 @@ import {
 	ThemeToggler,
 	WeatherInfo,
 } from './components'
-import { WEATHER_API_KEY } from './constants/constants'
 import { WeatherData } from './types/WeatherData'
 import { Loader } from './uikit'
 
 const Togglers = styled.div`
 	display: flex;
-	align-items: 'center';
+	align-items: center;
 	gap: 20px;
 `
 
 const App: React.FC = () => {
-  const [unit, setUnit] = useState('metric')
-  const [city, setCity] = useState('Moscow')
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+	const [unit, setUnit] = useState('celsius')
+	const [city, setCity] = useState('Moscow')
+	const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
+	const [loading, setLoading] = useState<boolean>(false)
+	const [latitude, setLatitude] = useState<number | null>(null)
+	const [longitude, setLongitude] = useState<number | null>(null)
+	const [timezone, setTimezone] = useState<string | null>(null)
 
-  const handleSearch = async (newCity: string) => {
-    setCity(newCity)
-    fetchWeather(newCity)
-  }
+	const fetchUserLocation = () => {
+		if ('geolocation' in navigator) {
+			navigator.geolocation.getCurrentPosition(
+				async (position) => {
+					const { latitude, longitude } = position.coords
+					setLatitude(latitude)
+					setLongitude(longitude)
 
-  const fetchWeather = async (newCity: string) => {
-    setLoading(true)
+					await fetchWeatherByCoords(latitude, longitude)
+				},
+				async (error) => {
+					console.warn(
+						'Geolocation rejected, showing the weather in Moscow.',
+						error
+					)
+					await fetchWeather('Moscow')
+				}
+			)
+		} else {
+			console.warn('Geolocation rejected, showing the weather in Moscow.')
+			fetchWeather('Moscow')
+		}
+	}
 
-    try {
-      const { data } = await api.get(
-        `weather?q=${newCity}&units=${unit}&appid=${WEATHER_API_KEY}`
-      )
+	const handleSearch = async (newCity: string) => {
+		setCity(newCity)
+		fetchWeather(newCity)
+	}
 
-      const lat = data.coord.lat
-      const lon = data.coord.lon
+	const fetchWeather: any = async (newCity: string) => {
+		setLoading(true)
 
-      const weatherDataCall = await api.get(
-        `onecall?lat=${lat}&lon=${lon}&units=${unit}&appid=${WEATHER_API_KEY}`
-      )
+		try {
+			const geoResponse = await fetch(
+				`https://geocoding-api.open-meteo.com/v1/search?name=${newCity}&count=1&language=en`
+			)
 
-      setWeatherData(weatherDataCall.data)
-    } catch (error) {
-      console.error(error)
-      setWeatherData(null)
-    } finally {
-      setLoading(false)
-    }
-  }
+			const geoData = await geoResponse.json()
 
-  const fetchWeatherByCoords = async (lat: number, lon: number) => {
-    setLoading(true)
+			if (!geoData || !geoData.results || geoData.results.length === 0) {
+				throw new Error('Город не найден.')
+			}
 
-    try {
-      const geoResponse = await api.get(
-        `weather?lat=${lat}&lon=${lon}&units=${unit}&appid=${WEATHER_API_KEY}`
-      )
 
-      const newCity = geoResponse.data.name
-      setCity(newCity)
+			const { name, latitude, longitude, timezone } = geoData.results[0]
+			setCity(name)
+			setLatitude(latitude)
+			setLongitude(longitude)
+			setTimezone(timezone)
 
-      const weatherDataCall = await api.get(
-        `onecall?lat=${lat}&lon=${lon}&units=${unit}&appid=${WEATHER_API_KEY}`
-      )
+			const weatherResponse = await fetch(
+				`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
+					timezone || 'auto'
+				}&temperature_unit=${unit}`
+			)
 
-      setWeatherData(weatherDataCall.data)
-    } catch (error) {
-      console.error(error)
-      setWeatherData(null)
-    } finally {
-      setLoading(false)
-    }
-  }
+			const weatherData = await weatherResponse.json()
 
-  useEffect(() => {
-    const fetchInitialWeatherData = async () => {
-      setLoading(true)
+			setWeatherData(weatherData)
+		} catch (error) {
+			console.error(error)
+			setWeatherData(null)
+		} finally {
+			setLoading(false)
+		}
+	}
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude
-            const lon = position.coords.longitude
-            fetchWeatherByCoords(lat, lon)
-          },
-          (error) => {
-            console.error('Ошибка получения местоположения', error)
-            fetchWeather('Moscow')
-          }
-        )
-      } else {
-        fetchWeather('Moscow')
-      }
-    }
+	const fetchCityName = async (lat: number, lon: number): Promise<string> => {
+		try {
+			const response = await fetch(
+				`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=en`
+			)
 
-    fetchInitialWeatherData()
-  }, [unit])
+			if (!response.ok) {
+				throw new Error(`Ошибка запроса: ${response.status}`)
+			}
 
-  return (
-    <>
-      <Navbar>
-        <SearchInput onSearch={handleSearch} />
-        <Togglers>
-          <ThemeToggler />
-          <TempToggler onUnitChange={setUnit} />
-        </Togglers>
-      </Navbar>
-      {loading ? (
-        <Loader />
-      ) : weatherData ? (
-        <WeatherInfo city={city} data={weatherData} unit={unit} />
-      ) : null}
-    </>
-  )
+			const data = await response.json()
+
+			if (data && data.address && data.address.city) {
+				return data.address.city
+			} else {
+				console.warn('Город не найден для указанных координат.')
+				return 'Unknown City'
+			}
+		} catch (error) {
+			console.error('Ошибка получения названия города:', error)
+			return 'Unknown City'
+		}
+	}
+
+	const fetchWeatherByCoords = async (lat: number, lon: number) => {
+		if (lat === undefined || lon === undefined) {
+			console.error('Широта или долгота не определены')
+			return
+		}
+		setLoading(true)
+
+		try {
+			const cityName = await fetchCityName(lat, lon)
+			setCity(cityName)
+
+			const weatherData = await getWeatherData(lat, lon)
+			setWeatherData(weatherData)
+		} catch (error) {
+			console.error('Ошибка получения данных:', error)
+			setWeatherData(null)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	useEffect(() => {
+		fetchUserLocation()
+	}, [])
+
+	return (
+		<>
+			<Navbar>
+				<SearchInput onSearch={handleSearch} />
+				<Togglers>
+					<ThemeToggler />
+					<TempToggler onUnitChange={setUnit} />
+				</Togglers>
+			</Navbar>
+			{loading ? (
+				<Loader />
+			) : weatherData ? (
+				<WeatherInfo
+					lat={latitude}
+					lon={longitude}
+					city={city}
+					data={weatherData}
+					unit={unit}
+					timezone={timezone}
+				/>
+			) : null}
+		</>
+	)
 }
 
 export default App

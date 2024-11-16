@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { WEATHER_API_KEY } from '../constants/constants'
+import { Loader } from '../uikit'
 import { CurrentWeather } from './CurrentWeather'
 import { ForecastWeathers } from './ForecastWeathers'
-import { Loader } from '../uikit'
 
 const WeatherDisplayContainer = styled.div`
 	margin: 90px 44px 96px 34px;
@@ -25,70 +24,59 @@ interface Props {
 	city: string
 }
 
-type ForecastData = {
-	temperature: number
-	time: string
-	icon: JSX.Element
-}
-
 export const WeatherDisplay: React.FC<Props> = ({ data, unit, city }) => {
-	const [forecastData, setForecastData] = useState<ForecastData[]>([])
+	const [forecastData, setForecastData] = useState<any[]>([])
+	const [currentTemp, setCurrentTemp] = useState<number | null>(null)
+
+	const cityName = city || 'Unknown City'
+	const currentDate =
+		(data?.current_weather?.time || Date.now() / 1000) +
+		(data?.utc_offset_seconds || 0)
 
 	useEffect(() => {
-		const fetchWeatherData = async () => {
-			try {
-				const res = await fetch(
-					`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`
-				)
-				const data = await res.json()
+		if (data && data.hourly && data.hourly.temperature_2m) {
+			const currentTimeUTC = Date.now()
 
-				if (!data.coord) {
-					throw new Error('Не удалось получить координаты.')
-				}
-
-				const lat = data.coord.lat
-				const lon = data.coord.lon
-
-				const weatherResponse = await fetch(
-					`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&units=${unit}&appid=${WEATHER_API_KEY}`
-				)
-				const weatherData = await weatherResponse.json()
-
-				const forecast = weatherData.hourly.map((item: any) => ({
-					time: new Date(item.dt * 1000).toLocaleTimeString('en-GB', {
+			const forecast: any = data.hourly.temperature_2m.map(
+				(temp: number, index: number) => ({
+					time: new Date(data.hourly.time[index]).toLocaleTimeString('en-GB', {
 						hour: 'numeric',
 						hour12: true,
 					}),
-					temperature: Math.round(item.temp),
+					temperature_2m: temp,
 					icon: (
 						<img
-							src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
-							alt={item.weather[0].description}
+							src={`https://openweathermap.org/img/wn/01d.png`}
+							alt='Weather icon'
 						/>
 					),
-				}))
+				})
+			)
 
-				setForecastData(forecast)
-			} catch (error) {
-				console.error(error)
+			let closestForecastIndex = -1
+			for (let i = 0; i < forecast.length; i++) {
+				const forecastTime = new Date(data.hourly.time[i]).getTime()
+				if (forecastTime <= currentTimeUTC) {
+					closestForecastIndex = i
+				} else {
+					break
+				}
 			}
+
+			if (closestForecastIndex === -1) closestForecastIndex = 0
+
+			const currentTemperature =
+				data.hourly.temperature_2m[closestForecastIndex] || null
+			setCurrentTemp(currentTemperature)
+
+			const filteredForecast = forecast.slice(closestForecastIndex)
+			setForecastData(filteredForecast)
 		}
+	}, [data])
 
-		fetchWeatherData()
-	}, [unit, city])
+	if (!data) return <Loader />
 
-	if (!data || !data.main || !data.sys) {
-		return <Loader />
-	}
-
-	const { main, name, dt, sys } = data
-
-	const cityName = name
-	const country = sys.country
-
-	const temperatureCelsius = main.temp
-
-	const date = new Date(dt * 1000)
+	const date = new Date(currentDate * 1000)
 	const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' })
 	const dayOfMonth = date.getDate()
 	const month = date.toLocaleString('en-US', { month: 'short' })
@@ -100,9 +88,9 @@ export const WeatherDisplay: React.FC<Props> = ({ data, unit, city }) => {
 			<WeatherDisplayContainer>
 				<CurrentWeather
 					date={formattedDate}
-					temp={temperatureCelsius}
+					temp={currentTemp}
 					city={cityName}
-					country={country}
+					unit={unit}
 				/>
 				<ForecastWeathers forecast={forecastData} unit={unit} />
 			</WeatherDisplayContainer>

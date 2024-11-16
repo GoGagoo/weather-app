@@ -1,28 +1,21 @@
 import axios from 'axios'
-import { BASE_URL, WEATHER_API_KEY } from '../constants/constants'
 
-export const api = axios.create({
-	baseURL: BASE_URL,
-	params: {
-		lang: 'en',
-	},
-})
-
-export const getWeatherData = async (
-	city: string,
-	units: string = 'metric'
-) => {
+export const getWeatherData = async (latitude: number, longitude: number) => {
 	try {
-		const { data } = await axios.get(`${BASE_URL}/weather`, {
+		const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
 			params: {
-				q: city,
-				units,
-				appid: WEATHER_API_KEY,
+				latitude,
+				longitude,
+				current_weather: true,
+				current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m',
+				hourly: 'temperature_2m,visibility',
+				daily: 'sunrise,sunset',
+				timezone: 'auto',
 			},
 		})
-		return data
+		return response.data
 	} catch (error) {
-		console.log('Error: ', error)
+		console.error('Error fetching weather data:', error)
 		return null
 	}
 }

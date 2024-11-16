@@ -16,16 +16,18 @@ const SearchResultItem = styled.div<{ isSelected: boolean }>`
 	padding: 10px;
 	cursor: pointer;
 	background-color: ${({ isSelected }) =>
-		isSelected ? '#f0f0f0' : 'transparent'};
+		isSelected ? '#7eb2fb' : 'transparent'};
 	color: black;
 	&:hover {
-		background-color: #f0f0f0;
+		background-color: #4b91f3;
+	}
+	&:active {
+		background-color: #7eb2fb;
 	}
 `
 
 interface SearchResultItem {
 	name: string
-	country: string
 }
 
 interface Props {
@@ -75,7 +77,7 @@ export const SearchResultList: React.FC<Props> = ({
 					isSelected={index === highlightedIndex}
 					onClick={() => onSelect(result.name)}
 				>
-					{result.name}, {result.country}
+					{result.name}
 				</SearchResultItem>
 			))}
 		</SearchResultListContainer>
