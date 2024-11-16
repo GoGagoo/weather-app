@@ -7,6 +7,4 @@ const NavbarContainer = styled.nav`
 	align-items: center;
 `
 
-export const Navbar = ({ children }: { children: React.ReactNode }) => (
-	<NavbarContainer>{children}</NavbarContainer>
-)
+export { NavbarContainer }

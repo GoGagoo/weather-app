@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { WeatherData as WeatherDataType } from '../types/WeatherData'
 import { Loader } from '../uikit'
-import { NotFound } from './NotFound'
-import { WeatherDetails } from './WeatherDetails'
-import { WeatherDisplay } from './WeatherDisplay'
+import { NotFound } from './NotFound/NotFound'
+import { WeatherDetails } from './WeatherDetails/WeatherDetails'
+import { WeatherDisplay } from './WeatherDisplay/WeatherDisplay'
 
 interface Props {
 	city: string
@@ -14,7 +14,14 @@ interface Props {
 	timezone: string | null
 }
 
-export const WeatherInfo: React.FC<Props> = ({ unit, data, city, lat, lon, timezone }) => {
+export const WeatherInfo: React.FC<Props> = ({
+	unit,
+	data,
+	city,
+	lat,
+	lon,
+	timezone,
+}) => {
 	const [weatherData, setWeatherData] = useState<WeatherDataType | null>(data)
 	const [loading, setLoading] = useState<boolean>(true)
 
@@ -23,7 +30,9 @@ export const WeatherInfo: React.FC<Props> = ({ unit, data, city, lat, lon, timez
 			setLoading(true)
 			try {
 				const response = await fetch(
-					`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${timezone || 'auto'}&temperature_unit=${unit}`
+					`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,visibility&daily=sunrise,sunset&timezone=${
+						timezone || 'auto'
+					}&temperature_unit=${unit}`
 				)
 
 				const data = await response.json()

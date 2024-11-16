@@ -10,12 +10,7 @@ import {
 } from './components'
 import { WeatherData } from './types/WeatherData'
 import { Loader } from './uikit'
-
-const Togglers = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 20px;
-`
+import { Togglers } from './App.styled'
 
 const App: React.FC = () => {
 	const [unit, setUnit] = useState('celsius')

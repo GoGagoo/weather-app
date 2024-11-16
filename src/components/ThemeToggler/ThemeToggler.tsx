@@ -1,11 +1,6 @@
-import styled from 'styled-components'
-import { useTheme } from '../hooks/useTheme'
-import { Select } from '../uikit'
-
-const Options = styled.option`
-	font-size: 16px;
-	color: #41c4cb;
-`
+import { useTheme } from '../../hooks/useTheme'
+import { Select } from '../../uikit'
+import { Options } from './ThemeToggler.styled'
 
 const options = [
 	{ value: 'light', label: 'Light' },

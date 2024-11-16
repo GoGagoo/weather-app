@@ -1,4 +1,3 @@
-import { CloudOff } from 'lucide-react'
 import styled from 'styled-components'
 
 const ErrorWrapper = styled.div`
@@ -15,10 +14,4 @@ const ErrorWrapper = styled.div`
 	box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.25);
 `
 
-export const NotFound = () => (
-	<ErrorWrapper>
-		<CloudOff fill='white' strokeWidth={1} size={100} />
-		<p>Oops! We couldn't load the weather data.</p>
-		<p>Please try again later</p>
-	</ErrorWrapper>
-)
+export { ErrorWrapper }

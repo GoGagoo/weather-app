@@ -1,50 +1,11 @@
 import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { SearchResultList } from './SearchResultList'
-
-const SearchInputContainer = styled.div<{
-	hasdigits: boolean | undefined
-	errorcity: boolean
-}>`
-	display: flex;
-	align-items: center;
-	min-width: 148px;
-	width: 100%;
-	border-bottom: 2px solid
-		${(props) =>
-			props.hasdigits ? 'red' : props.errorcity ? 'red' : '#ffffff6e'};
-	transition: border-color 0.1s ease;
-	position: relative;
-`
-
-const SearchInputField = styled.input`
-	width: 100%;
-	color: rgb(255, 255, 255);
-	padding: 10px;
-	font-size: 20px;
-	border: none;
-	outline: none;
-	background-color: transparent;
-
-	&::placeholder {
-		color: rgb(255, 255, 255, 0.5);
-	}
-
-	&::-webkit-search-cancel-button {
-		display: none;
-	}
-`
-
-const ErrorMessage = styled.div`
-	color: red;
-	position: absolute;
-	top: 100%;
-	left: 0;
-	margin-top: 10px;
-	font-size: 14px;
-	transition: 0.1s ease;
-`
+import { SearchResultList } from '../SearchResultList/SearchResultList'
+import {
+	ErrorMessage,
+	SearchInputContainer,
+	SearchInputField,
+} from './SearchInput.styled'
 
 interface City {
 	name: string
@@ -121,20 +82,20 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 			)
 
 			if (!geoResponse.ok) {
-				throw new Error('Ошибка сети при запросе подсказок.');
+				throw new Error('Ошибка сети при запросе подсказок.')
 			}
 
 			const geoData = await geoResponse.json()
 
 			if (!geoData.results || geoData.results.length === 0) {
-				setSearchResults([]);
-				return;
+				setSearchResults([])
+				return
 			}
 
 			const suggestions = geoData.results.map((city: any) => ({
 				name: city.name,
 			}))
-			
+
 			setSearchResults(suggestions)
 			setShowResults(true)
 		} catch (error) {
