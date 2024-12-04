@@ -1,4 +1,6 @@
 import { MapPin } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { TypedRootState } from '../../store/store'
 import {
 	City,
 	CityWrapper,
@@ -9,36 +11,32 @@ import {
 	UnderDate,
 } from './CurrentWeather.styled'
 
-interface Props {
-	city: string
-	temp: number | null
-	date: string
-	unit: string | undefined
-}
+export const CurrentWeather: React.FC = () => {
+	const { city, currentTemp, unit } = useSelector(
+		(state: TypedRootState) => state.weather
+	)
 
-export const CurrentWeather: React.FC<Props> = ({
-	city,
-	temp = null,
-	date,
-	unit = 'celsius',
-}) => {
+	const now = new globalThis.Date()
+	const dayOfWeek = now.toLocaleString('en-US', { weekday: 'short' })
+	const dayOfMonth = now.getDate()
+	const month = now.toLocaleString('en-US', { month: 'short' })
+
+	const formattedDate = `${dayOfWeek}, ${dayOfMonth} ${month}`
+
 	const tempUnit = unit === 'celsius' ? 'C' : 'F'
-
-	const currentTemp = temp !== null ? temp : 0
-	const finalTemperature = currentTemp < 0 && currentTemp > -1 ? 0 : currentTemp
-	const displayTemperature =
-		finalTemperature !== undefined ? finalTemperature.toFixed() : 'N/A'
+	const finalTemperature =
+		currentTemp !== null && currentTemp > -1 ? currentTemp.toFixed() : 'N/A'
 
 	return (
 		<CurrentWeatherInfo>
 			<CurrentWeatherBlock>
 				<Date>
 					<p>Today</p>
-					<UnderDate>{date}</UnderDate>
+					<UnderDate>{formattedDate}</UnderDate>
 				</Date>
 			</CurrentWeatherBlock>
 			<Temperature>
-				{displayTemperature}°{tempUnit}
+				{finalTemperature}°{tempUnit}
 			</Temperature>
 			<CityWrapper>
 				<MapPin size={24} /> <City>{city}</City>

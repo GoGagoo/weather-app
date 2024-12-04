@@ -1,3 +1,4 @@
+import { ForecastItem } from '../../types/WeatherData'
 import {
 	ForecastCurrentData,
 	ForecastDataWrapper,
@@ -6,12 +7,6 @@ import {
 	HourlyForecastContainer,
 	WeatherTime,
 } from './ForecastWeathers.styled'
-
-interface ForecastItem {
-	time: string
-	icon: JSX.Element
-	temperature_2m: number
-}
 
 interface Props {
 	forecast: ForecastItem[]
