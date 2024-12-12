@@ -1,7 +1,8 @@
 export type WeatherData = {
+	timezone: string
 	current: {
 		wind_speed_10m: number
-		relative_humidity_2m: number[]
+		relative_humidity_2m: number
 		precipitation: number
 		rain: number
 		pressure_msl: number
@@ -20,7 +21,7 @@ export type WeatherData = {
 }
 
 export interface WeatherState {
-	data: WeatherData | null | undefined
+	data: WeatherData | null
 	city: string | null
 	loading: boolean
 	error: string | null
@@ -34,6 +35,15 @@ export interface WeatherState {
 
 export interface ForecastItem {
 	time: string
-	icon: JSX.Element
+	icon: string
 	temperature_2m: number
 }
+
+export type WeatherApiParams = {
+	latitude: number
+	longitude: number
+	unit: string
+	timezone: string
+}
+
+export type TempUnit = 'celsius' | 'fahrenheit'

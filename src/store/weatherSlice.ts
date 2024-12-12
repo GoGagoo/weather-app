@@ -1,16 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ForecastItem, WeatherData, WeatherState } from '../types/WeatherData'
+import { TODOS_LOCAL_STORAGE_TEMP_UNIT } from '../constants/constants'
 
 const initialState: WeatherState = {
 	data: null,
-	city: '',
+	city: 'Unknown City',
 	loading: false,
 	error: null,
-	unit: 'celsius',
+	unit: localStorage.getItem(TODOS_LOCAL_STORAGE_TEMP_UNIT) || 'celsius',
 	latitude: null,
 	longitude: null,
 	timezone: null,
-	currentTemp: 0,
+	currentTemp: null,
 	forecastData: [],
 }
 
@@ -33,6 +34,7 @@ const weatherSlice = createSlice({
 		},
 		setUnit(state, action: PayloadAction<string>) {
 			state.unit = action.payload
+			localStorage.setItem(TODOS_LOCAL_STORAGE_TEMP_UNIT, action.payload)
 		},
 		setCoordinates(
 			state,

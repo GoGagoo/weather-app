@@ -1,5 +1,5 @@
 import { call, put, takeEvery } from 'redux-saga/effects'
-import { GEOCODING_URL, OPEN_METEO_FORECAST_URL } from '../constants/constants'
+import { fetchCoordinatesApi, fetchWeatherApi } from '../api'
 import {
 	fetchWeatherByCity,
 	fetchWeatherByCoords,
@@ -14,45 +14,6 @@ import {
 import { ForecastItem, WeatherData } from '../types/WeatherData'
 import { getWeatherIcon } from '../utils/getWeatherIcon'
 
-type WeatherApiParams = {
-	latitude: number
-	longitude: number
-	unit: string
-	timezone: string
-}
-
-function fetchCoordinatesApi(city: string) {
-	const url = `${GEOCODING_URL}?name=${city}&count=1&language=en`
-	return fetch(url)
-		.then((res) => {
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`)
-			}
-			return res.json()
-		})
-		.then((data) => {
-			return data
-		})
-}
-
-function fetchWeatherApi(params: WeatherApiParams): Promise<WeatherData> {
-	const { latitude, longitude, unit, timezone } = params
-	const url = `${OPEN_METEO_FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,pressure_msl,wind_speed_10m&hourly=temperature_2m,weather_code,visibility&daily=sunrise,sunset&timezone=${
-		timezone || 'auto'
-	}&temperature_unit=${unit}`
-
-	return fetch(url)
-		.then((res) => {
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`)
-			}
-			return res.json()
-		})
-		.then((data) => {
-			return data
-		})
-}
-
 function* fetchWeatherWorker(
 	action: ReturnType<typeof fetchWeatherByCity>
 ): Generator {
@@ -61,7 +22,8 @@ function* fetchWeatherWorker(
 		const geoData = yield call(fetchCoordinatesApi, action.payload)
 
 		if (!geoData.results || geoData.results.length === 0) {
-			throw new Error('City not found')
+			yield put(fetchWeatherFailure('City not found or API error'))
+			return
 		}
 
 		const { latitude, longitude, timezone, name } = geoData.results[0]
@@ -72,22 +34,34 @@ function* fetchWeatherWorker(
 			latitude,
 			longitude,
 			unit: 'celsius',
-			timezone,
+			timezone: 'auto',
 		})
 
-		console.log('Weather Data:', weatherData)
-
-		if (!weatherData || !weatherData.current || !weatherData.hourly) {
+		if (
+			!weatherData ||
+			!weatherData.current ||
+			!weatherData.hourly ||
+			!weatherData.daily
+		) {
 			throw new Error('Weather data is missing')
 		}
 
-		const currentTimeUTC = Date.now()
-		const closestForecastIndex = weatherData.hourly.time.findIndex(
-			(time: string) => new Date(time).getTime() > currentTimeUTC
+		const localTime = new Date(
+			new Date().toLocaleString('en-US', { timeZone: timezone || 'auto' })
+		).getTime()
+
+		const forecastTimes = weatherData.hourly.time.map((time: string) => {
+			return new Date(
+				new Date(time).toLocaleString('en-US', { timeZone: timezone || 'auto' })
+			).getTime()
+		})
+
+		const closestForecastIndex = forecastTimes.findIndex(
+			(forecastTime) => forecastTime >= localTime
 		)
 
 		if (closestForecastIndex === -1) {
-			throw new Error('No forecast data available for the current time')
+			throw new Error('No forecast data available for the current hour')
 		}
 
 		const currentTemperature =
@@ -98,24 +72,23 @@ function* fetchWeatherWorker(
 			(time: string, index: number) => {
 				const temp = weatherData.hourly.temperature_2m[index]
 				const weatherCode = Number(weatherData.hourly.weather_code[index])
-		
-				// Преобразуем время в локальный часовой пояс пользователя
-				const localTime = new Date(time).toLocaleTimeString('en-GB', {
+
+				const formattedTime = new Intl.DateTimeFormat('en-GB', {
 					hour: 'numeric',
 					hour12: true,
-					timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone // Получаем текущий часовой пояс пользователя
-				})
-		
+					timeZone: timezone || 'auto',
+				}).format(new Date(time))
+
 				return {
-					time: localTime,
+					time: formattedTime,
 					temperature_2m: temp,
 					icon: getWeatherIcon(weatherCode),
 				}
 			}
 		)
 
+		yield put(setCity(name))
 		yield put(setForecast(forecast.slice(closestForecastIndex)))
-		console.log(forecast.slice(closestForecastIndex))
 		yield put(fetchWeatherSuccess(weatherData))
 	} catch (error: any) {
 		console.error('Error fetching weather:', error.message)
@@ -141,9 +114,7 @@ function* fetchWeatherByCoordsWorker(
 	}
 }
 
-
-
-export function* watchFetchWeather() {
+export function* weatherWatcher() {
 	yield takeEvery(fetchWeatherByCity.type, fetchWeatherWorker)
 	yield takeEvery(fetchWeatherByCoords.type, fetchWeatherByCoordsWorker)
 }

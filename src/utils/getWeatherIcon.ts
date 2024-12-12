@@ -1,4 +1,4 @@
-export const getWeatherIcon = (code: number): JSX.Element => {
+export const getWeatherIcon = (code: number): string => {
 	const weatherIcons: { [key: number]: string } = {
 		0: 'https://openweathermap.org/img/wn/01d.png', // Ясно
 		1: 'https://openweathermap.org/img/wn/02d.png', // Частично облачно
@@ -13,14 +13,5 @@ export const getWeatherIcon = (code: number): JSX.Element => {
 		95: 'https://openweathermap.org/img/wn/11d.png', // Сильная гроза
 	}
 
-	const iconUrl =
-		weatherIcons[code] || 'https://openweathermap.org/img/wn/01n.png'
-
-	return (
-		<img
-			src={iconUrl}
-			alt='Weather Icon'
-			style={{ width: '48px', height: '48px' }}
-		/>
-	)
+	return weatherIcons[code] || 'https://openweathermap.org/img/wn/01n.png'
 }

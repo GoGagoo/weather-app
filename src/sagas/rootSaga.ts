@@ -1,6 +1,6 @@
 import { all } from 'redux-saga/effects'
-import { watchFetchWeather } from './weatherSaga'
+import { weatherWatcher } from './weatherSaga'
 
 export default function* rootSaga() {
-	yield all([watchFetchWeather()])
+	yield all([weatherWatcher()])
 }

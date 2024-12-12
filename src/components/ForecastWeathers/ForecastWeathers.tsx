@@ -1,3 +1,4 @@
+import { useTypedSelector } from '../../hooks/useTypedSelector'
 import { ForecastItem } from '../../types/WeatherData'
 import {
 	ForecastCurrentData,
@@ -8,12 +9,10 @@ import {
 	WeatherTime,
 } from './ForecastWeathers.styled'
 
-interface Props {
-	forecast: ForecastItem[]
-	unit: string
-}
+export const ForecastWeathers: React.FC = () => {
+	const forecast = useTypedSelector((state) => state.weather.forecastData)
+	const unit = useTypedSelector((state) => state.weather.unit)
 
-export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 	const tempUnit = unit === 'celsius' ? 'C' : 'F'
 
 	const formatTemperature = (temp: number) => {
@@ -25,13 +24,17 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 
 	return (
 		<HourlyForecastContainer>
-			{forecast.slice(0, 8).map((item, index) => (
+			{forecast.slice(0, 8).map((item: ForecastItem, index: number) => (
 				<ForecastDataWrapper key={index}>
 					{index === 0 ? (
 						<>
 							<WeatherTime>Now</WeatherTime>
 							<ForecastCurrentData>
-								{item.icon}
+								<img
+									src={item.icon}
+									alt='Weather Icon'
+									style={{ width: '48px', height: '48px' }}
+								/>
 								<ForecastTemperature>
 									{formatTemperature(item.temperature_2m).toFixed()}°{tempUnit}
 								</ForecastTemperature>
@@ -41,7 +44,11 @@ export const ForecastWeathers: React.FC<Props> = ({ forecast, unit }) => {
 						<>
 							<WeatherTime>{item.time}</WeatherTime>
 							<ForecastOtherData>
-								{item.icon}
+								<img
+									src={item.icon}
+									alt='Weather Icon'
+									style={{ width: '48px', height: '48px' }}
+								/>
 								<ForecastTemperature>
 									{formatTemperature(item.temperature_2m).toFixed()}°{tempUnit}
 								</ForecastTemperature>

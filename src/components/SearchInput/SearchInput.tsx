@@ -125,19 +125,6 @@ export const SearchInput: React.FC<Props> = ({ onSearch }) => {
 		}
 	}
 
-	useEffect(() => {
-		const debounceTimeout = setTimeout(() => {
-			if (location.length > 3 && !hasDigits) {
-				fetchCitySuggestions(location)
-			} else {
-				setSearchResults([])
-				setShowResults(false)
-			}
-		}, 500)
-
-		return () => clearTimeout(debounceTimeout)
-	}, [location, hasDigits])
-
 	const handleSelectCity: any = (city: string) => {
 		setSelectedCity(city)
 		onSearch(city)

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Togglers } from './App.styled'
 import {
 	Navbar,
@@ -8,40 +8,27 @@ import {
 	ThemeToggler,
 	WeatherInfo,
 } from './components'
-import { TypedRootState } from './store/store'
-import {
-	fetchWeatherByCity,
-	fetchWeatherByCoords,
-	setUnit,
-} from './store/weatherSlice'
+import { useGeolocation } from './hooks/useGeolocation'
+import { useTypedSelector } from './hooks/useTypedSelector'
+import { fetchWeatherByCity, setUnit } from './store/weatherSlice'
 import { Loader } from './uikit'
 
 const App: React.FC = () => {
 	const dispatch = useDispatch()
-	const { data: weatherData, loading } = useSelector(
-		(state: TypedRootState) => state.weather
+
+	useGeolocation()
+
+	useEffect(() => {
+		dispatch(fetchWeatherByCity('Oslo'))
+	}, [dispatch])
+
+	const { data: weatherData, loading } = useTypedSelector(
+		(state) => state.weather
 	)
 
 	const handleSearch = (newCity: string) => {
 		dispatch(fetchWeatherByCity(newCity))
 	}
-
-	useEffect(() => {
-		if ('geolocation' in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				(position) => {
-					const { latitude, longitude } = position.coords
-					dispatch(fetchWeatherByCoords({ latitude, longitude }))
-				},
-				(error) => {
-					console.error('Error getting location:', error)
-					dispatch(fetchWeatherByCity('Oslo'))
-				}
-			)
-		} else {
-			dispatch(fetchWeatherByCity('Oslo'))
-		}
-	}, [dispatch])
 
 	const handleUnitChange = (newUnit: string) => {
 		dispatch(setUnit(newUnit))

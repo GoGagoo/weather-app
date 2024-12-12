@@ -1,6 +1,5 @@
 import { MapPin } from 'lucide-react'
-import { useSelector } from 'react-redux'
-import { TypedRootState } from '../../store/store'
+import { useTypedSelector } from '../../hooks/useTypedSelector'
 import {
 	City,
 	CityWrapper,
@@ -12,8 +11,8 @@ import {
 } from './CurrentWeather.styled'
 
 export const CurrentWeather: React.FC = () => {
-	const { city, currentTemp, unit } = useSelector(
-		(state: TypedRootState) => state.weather
+	const { city, currentTemp, unit } = useTypedSelector(
+		(state) => state.weather
 	)
 
 	const now = new globalThis.Date()
@@ -24,8 +23,11 @@ export const CurrentWeather: React.FC = () => {
 	const formattedDate = `${dayOfWeek}, ${dayOfMonth} ${month}`
 
 	const tempUnit = unit === 'celsius' ? 'C' : 'F'
-	const finalTemperature =
-		currentTemp !== null && currentTemp > -1 ? currentTemp.toFixed() : 'N/A'
+	let finalTemperature = currentTemp !== null ? currentTemp.toFixed() : 'N/A'
+
+	if (finalTemperature === '-0') {
+		finalTemperature = '0'
+	}
 
 	return (
 		<CurrentWeatherInfo>
