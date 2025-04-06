@@ -52,4 +52,22 @@ body.dark {
     --bg-color: var(--darken-bg-color);
   }
 }
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: #343535;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #0E4A4D;
+	border-radius: 25px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #1c9276;
+}
 `
