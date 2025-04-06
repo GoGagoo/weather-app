@@ -65,7 +65,7 @@ const ForecastCurrentData = styled.div`
 	flex-direction: column;
 	align-items: center;
 	padding: 15px;
-	border: 1px solid #b3e7e6;
+	border: 2px solid #b3e7e6;
 	border-radius: 50px;
 	gap: 15px;
 	color: #ffffffe8;

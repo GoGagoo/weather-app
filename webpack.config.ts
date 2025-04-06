@@ -1,7 +1,9 @@
-import webpack from 'webpack'
-import path from 'path'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
 import dotenv from 'dotenv'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import path from 'path'
+import webpack from 'webpack'
+
+const Dotenv = require('dotenv-webpack')
 
 dotenv.config()
 
@@ -43,10 +45,10 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 			{
 				test: /\.bundle\.ts$/,
 				use: {
-					loader: 'bundle-loader', 
+					loader: 'bundle-loader',
 					options: {
-						name: '[name]'
-					}
+						name: '[name]',
+					},
 				},
 			},
 			{
@@ -57,25 +59,23 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 				test: /\.tsx?$/,
 				use: 'ts-loader',
 				exclude: /node_modules/,
-		},
-		{
+			},
+			{
 				test: /\.(svg|png|gif|jpg)$/,
 				exclude: /fonts/,
-				loader: 'file-loader'
-		},
-		{
+				loader: 'file-loader',
+			},
+			{
 				test: /\.(ttf|eot|woff|svg|woff2)$/,
-				loader: "file-loader"
-		}
+				loader: 'file-loader',
+			},
 		],
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: './public/index.html', 
+			template: './public/index.html',
 		}),
-		new webpack.DefinePlugin({
-			'process.env': JSON.stringify(process.env)
-	})
+		new Dotenv(),
 	],
 }
 

@@ -11,9 +11,7 @@ import {
 } from './CurrentWeather.styled'
 
 export const CurrentWeather: React.FC = () => {
-	const { city, currentTemp, unit } = useTypedSelector(
-		(state) => state.weather
-	)
+	const { city, currentTemp, unit } = useTypedSelector((state) => state.weather)
 
 	const now = new globalThis.Date()
 	const dayOfWeek = now.toLocaleString('en-US', { weekday: 'short' })
@@ -26,7 +24,7 @@ export const CurrentWeather: React.FC = () => {
 	let finalTemperature = currentTemp !== null ? currentTemp.toFixed() : 'N/A'
 
 	if (finalTemperature === '-0') finalTemperature = '0'
-	
+
 	return (
 		<CurrentWeatherInfo>
 			<CurrentWeatherBlock>

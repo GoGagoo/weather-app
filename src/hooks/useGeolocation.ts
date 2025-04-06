@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { OPEN_CAGE_DATA_URL } from '../constants/constants'
 import { fetchWeatherByCoords, setCoordinates } from '../store/weatherSlice'
 
 export const useGeolocation = () => {
 	const dispatch = useDispatch()
-	
+
 	const [geoResolved, setGeoResolved] = useState(false)
 	const [location, setLocation] = useState<{
 		latitude: number
@@ -17,11 +18,22 @@ export const useGeolocation = () => {
 			async (position) => {
 				const { latitude, longitude } = position.coords
 				try {
-					const res = await axios.get(
-						`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`
-					)
+					const res = await axios.get(OPEN_CAGE_DATA_URL, {
+						params: {
+							q: `${latitude},${longitude}`,
+							key: process.env.OPEN_CAGE_DATA_KEY,
+							language: 'en',
+							no_annotations: 1,
+						},
+					})
+
+					const components = res.data.results[0]?.components || {}
+
 					const city =
-						res.data.address?.city || res.data.address?.town || 'Unknown'
+						components.city ||
+						components.town ||
+						components.village ||
+						'Unknown'
 
 					dispatch(
 						setCoordinates({ latitude, longitude, timezone: 'auto', city })

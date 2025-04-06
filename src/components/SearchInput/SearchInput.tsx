@@ -1,6 +1,6 @@
-import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { SearchInputIcons } from '../../components/SearchInputIcons/SearchInputIcons'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
 import {
 	clearSearch,
@@ -54,6 +54,15 @@ export const SearchInput = () => {
 		dispatch(clearSearch())
 	}
 
+	const handleVoiceInput = (transcript: string) => {
+    dispatch(setQuery(transcript));
+    if (transcript.length > 1) {
+      dispatch(searchCitiesStart(transcript));
+    } else {
+      dispatch(clearSearch());
+    }
+  };
+
 	return (
 		<SearchInputContainer
 			$errorcity={!!error}
@@ -72,7 +81,8 @@ export const SearchInput = () => {
 					color={hasCharacters || error ? 'red' : '#ffffffa6'}
 				/>
 			) : (
-				<Search
+				<SearchInputIcons
+					onVoiceInput={handleVoiceInput}
 					size={20}
 					color={hasCharacters || error ? 'red' : '#ffffffa6'}
 				/>
