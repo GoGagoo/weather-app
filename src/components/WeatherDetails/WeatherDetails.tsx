@@ -19,6 +19,7 @@ import {
 	Title,
 	WeatherDetailsContainer,
 } from './WeatherDetails.styled'
+import { WeatherDetailItem } from './types'
 
 export const WeatherDetails = () => {
 	const { data, unit } = useTypedSelector((state) => state.weather)
@@ -55,7 +56,7 @@ export const WeatherDetails = () => {
 
 	const visibility = (hourlyWeather.visibility[0] / 1000).toFixed()
 
-	const details = [
+	const details: WeatherDetailItem[] = [
 		{
 			title: 'SUNRISE',
 			value: sunriseTime,

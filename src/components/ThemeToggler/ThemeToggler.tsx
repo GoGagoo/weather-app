@@ -13,6 +13,7 @@ export const ThemeToggler = () => {
 
 	const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const selectedTheme = event.target.value
+		
 		if (selectedTheme !== theme) toggleTheme(selectedTheme)
 	}
 

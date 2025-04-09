@@ -1,3 +1,4 @@
+import { NotFound } from '../NotFound/NotFound'
 import { useTypedSelector } from '../../hooks/useTypedSelector'
 import { CurrentWeather } from '../CurrentWeather/CurrentWeather'
 import { ForecastWeathers } from '../ForecastWeathers/ForecastWeathers'
@@ -8,13 +9,7 @@ export const WeatherDisplay: React.FC = () => {
 		(state) => state.weather
 	)
 
-	if (!forecastData.length || currentTemp === null || city === '') {
-		console.warn('WeatherDisplay is waiting for data:', {
-			forecastData,
-			currentTemp,
-			city,
-		})
-	}
+	if (!forecastData.length || currentTemp === null || city === '') return <NotFound />
 
 	return (
 		<>

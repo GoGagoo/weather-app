@@ -3,7 +3,7 @@ import {
 	SpeechRecognitionErrorEvent,
 	SpeechRecognitionEvent,
 	UseSpeechRecognitionReturn,
-} from '../types/SpeechRecognition'
+} from './types'
 
 export const useSpeechRecognition = (
 	onResult: (transcript: string) => void,

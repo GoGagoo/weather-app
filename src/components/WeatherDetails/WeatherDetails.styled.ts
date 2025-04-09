@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const Title = styled.div`
 	font-size: 27px;
-	color: #ffffffe8;
+	color: --primary-text-color;
 	margin: 32px 0 0 71px;
 
 	@media (max-width: 768px) {

@@ -55,13 +55,14 @@ export const SearchInput = () => {
 	}
 
 	const handleVoiceInput = (transcript: string) => {
-    dispatch(setQuery(transcript));
-    if (transcript.length > 1) {
-      dispatch(searchCitiesStart(transcript));
-    } else {
-      dispatch(clearSearch());
-    }
-  };
+		dispatch(setQuery(transcript))
+		
+		if (transcript.length > 1) {
+			dispatch(searchCitiesStart(transcript))
+		} else {
+			dispatch(clearSearch())
+		}
+	}
 
 	return (
 		<SearchInputContainer

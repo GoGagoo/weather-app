@@ -22,21 +22,27 @@ export const WeatherInfo: React.FC = () => {
 	}, [dispatch, geoResolved, location])
 
 	useEffect(() => {
+		let timeout: NodeJS.Timeout | null = null
+
 		if (!loading) {
-			const timeout = setTimeout(() => {
+			timeout = setTimeout(() => {
 				if (!data) setIsTimeout(true)
 			}, delay)
+		}
 
-			return () => clearTimeout(timeout)
+		return () => {
+			if (timeout) clearTimeout(timeout)
 		}
 	}, [data, loading])
 
 	if (loading) return <Loader />
 	if (error || isTimeout) return <NotFound />
 
-	return data ? (
-		<>
-			<WeatherDisplay /> <WeatherDetails />
-		</>
-	) : null
+	return (
+		data && (
+			<>
+				<WeatherDisplay /> <WeatherDetails />
+			</>
+		)
+	)
 }

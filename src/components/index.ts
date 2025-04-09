@@ -1,3 +1,4 @@
+
 export { CurrentWeather } from './CurrentWeather/CurrentWeather'
 export { ForecastWeathers } from './ForecastWeathers/ForecastWeathers'
 export { Navbar } from './Navbar/Navbar'
@@ -8,5 +9,7 @@ export { SearchInputIcons } from './SearchInputIcons/SearchInputIcons'
 export { TempToggler } from './TempToggler/TempToggler'
 export { ThemeToggler } from './ThemeToggler/ThemeToggler'
 export { WeatherDetails } from './WeatherDetails/WeatherDetails'
+export { WeatherTop } from './WeatherTop/WeatherTop'
+export { ThemeTempTogglers } from './ThemeTempTogglers/ThemeTempTogglers'
 export { WeatherDisplay } from './WeatherDisplay/WeatherDisplay'
 export { WeatherInfo } from './WeatherInfo'

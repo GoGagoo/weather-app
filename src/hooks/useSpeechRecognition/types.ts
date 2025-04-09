@@ -1,7 +1,7 @@
 export interface SpeechRecognitionEvent extends Event {
 	results: {
-		[key: number]: {
-			[key: number]: {
+		[key: string]: {
+			[key: string]: {
 				transcript: string
 				confidence: number
 			}

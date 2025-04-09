@@ -5,14 +5,14 @@ const CurrentWeatherBlock = styled.div`
 	gap: 15px;
 	justify-content: space-between;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const CurrentWeatherInfo = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 	opacity: 0;
 	transition: opacity 0.5s ease-in-out;
 	animation: fadeIn 1.5s forwards;
@@ -32,7 +32,7 @@ const Date = styled.div`
 	font-size: 27px;
 	flex-direction: column;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const UnderDate = styled.div`

@@ -1,21 +1,8 @@
-import { Togglers } from './App.styled'
-import {
-	Navbar,
-	SearchInput,
-	TempToggler,
-	ThemeToggler,
-	WeatherInfo,
-} from './components'
+import { WeatherInfo, WeatherTop } from './components'
 
 const App = () => (
 	<>
-		<Navbar>
-			<SearchInput />
-			<Togglers>
-				<ThemeToggler />
-				<TempToggler />
-			</Togglers>
-		</Navbar>
+		<WeatherTop />
 		<WeatherInfo />
 	</>
 )
