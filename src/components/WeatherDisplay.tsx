@@ -1,4 +1,3 @@
-import React from 'react'
 import { Cloud, MapPin, Snowflake } from 'lucide-react'
 import styled from 'styled-components'
 
@@ -21,14 +20,14 @@ const CurrentWeatherBlock = styled.div`
 	gap: 15px;
 	justify-content: space-between;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const CurrentWeatherInfo = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const CurrentWeatherDate = styled.div`
@@ -36,7 +35,7 @@ const CurrentWeatherDate = styled.div`
 	font-size: 27px;
 	flex-direction: column;
 	align-items: center;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const Temperature = styled.h1`
@@ -83,7 +82,7 @@ const ForecastDataWrapper = styled.div`
 
 const WeatherTime = styled.p`
 	font-size: 20px;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 const ForecastCurrentData = styled.div`
@@ -95,7 +94,7 @@ const ForecastCurrentData = styled.div`
 	border: 1px solid #b3e7e6;
 	border-radius: 50px;
 	gap: 15px;
-	color: #ffffffe8;
+	color: --primary-text-color;
 
 	&:hover {
 		background-color: #80e9ea;
@@ -112,7 +111,7 @@ const ForecastOtherData = styled.div`
 	border: 2px solid #b3e7e6;
 	border-radius: 50px;
 	gap: 15px;
-	color: #ffffffe8;
+	color: --primary-text-color;
 
 	&:hover {
 		background-color: #21a4a6;
@@ -122,7 +121,7 @@ const ForecastOtherData = styled.div`
 
 const ForecastTemperature = styled.p`
 	font-size: 20px;
-	color: #ffffffe8;
+	color: --primary-text-color;
 `
 
 export const WeatherDisplay = () => {

@@ -1,16 +1,10 @@
-import React from 'react'
-import { SearchInput, Navbar, TempToggler, WeatherDisplay } from './components'
+import { WeatherInfo, WeatherTop } from './components'
 
-const App: React.FC = () => {
-	return (
-		<div>
-			<Navbar>
-				<SearchInput />
-				<TempToggler />
-			</Navbar>
-			<WeatherDisplay />
-		</div>
-	)
-}
+const App = () => (
+	<>
+		<WeatherTop />
+		<WeatherInfo />
+	</>
+)
 
 export default App

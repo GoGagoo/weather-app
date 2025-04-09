@@ -1,6 +1,9 @@
 :root {
-	--primary-bg-color: linear-gradient(-45deg, #23a6d5, #23d5ab);
-	--darken-bg-color: linear-gradient(-45deg, #343535, #0d3d4f, #0e5d4a);;
+	--primary-bg-color: linear-gradient(-45deg, #2483a6, #1c9276);
+	--darken-bg-color: linear-gradient(-45deg, #343535, #0d3d4f, #0e5d4a);
 
-	--button-text-font: 16px/1.5 'HelveticaNeue-Roman', sans-serif;
+	--primary-btn-bg-color: #54d8f6a6;
+	--darken-btn-bg-color: #0E4A4D;
+
+	--primary-text-color: #ffffffe8;
 }
