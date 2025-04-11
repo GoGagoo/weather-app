@@ -1,13 +1,8 @@
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import dotenv from 'dotenv'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack from 'webpack'
-import CopyWebpackPlugin from 'copy-webpack-plugin'
-
-const Dotenv = require('dotenv-webpack')
-
-dotenv.config()
-
 import type { Configuration as DevServerConfiguration } from 'webpack-dev-server'
 
 const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
@@ -76,11 +71,13 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
 		}),
-		new Dotenv(),
+		new webpack.DefinePlugin({
+			'process.env.OPEN_CAGE_DATA_KEY': JSON.stringify(
+				process.env.OPEN_CAGE_DATA_KEY
+			),
+		}),
 		new CopyWebpackPlugin({
-			patterns: [
-				{ from: 'public/weather-icons', to: 'weather-icons' }
-			],
+			patterns: [{ from: 'public/weather-icons', to: 'weather-icons' }],
 		}),
 	],
 }
