@@ -1,4 +1,4 @@
-import { weatherIcons } from '../../public/weather-icons/index'
+import { weatherIcons } from '../assets/weather-icons/index'
 
 export const getWeatherIcon = (code: number): string => {
 	const iconMap: Record<number, string> = {

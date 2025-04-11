@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack from 'webpack'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 const Dotenv = require('dotenv-webpack')
 
@@ -13,7 +14,7 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 	entry: './src/index.tsx',
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].js',
+		filename: 'bundle.js',
 	},
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js'],
@@ -76,6 +77,11 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 			template: './public/index.html',
 		}),
 		new Dotenv(),
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'public/weather-icons', to: 'weather-icons' }
+			],
+		}),
 	],
 }
 
