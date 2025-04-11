@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { OPEN_CAGE_DATA_URL } from '../constants/constants'
+import { OPEN_CAGE_DATA_KEY } from '../config'
 import { fetchWeatherByCoords, setCoordinates } from '../store/weatherSlice'
 
 export const useGeolocation = () => {
@@ -21,7 +22,7 @@ export const useGeolocation = () => {
 					const res = await axios.get(OPEN_CAGE_DATA_URL, {
 						params: {
 							q: `${latitude},${longitude}`,
-							key: process.env.OPEN_CAGE_DATA_KEY,
+							key: OPEN_CAGE_DATA_KEY,
 							language: 'en',
 							no_annotations: 1,
 						},

@@ -1,8 +1,8 @@
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import dotenv from 'dotenv'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack from 'webpack'
-import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 const Dotenv = require('dotenv-webpack')
 
@@ -78,9 +78,7 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 		}),
 		new Dotenv(),
 		new CopyWebpackPlugin({
-			patterns: [
-				{ from: 'public/weather-icons', to: 'weather-icons' }
-			],
+			patterns: [{ from: 'public/weather-icons', to: 'weather-icons' }],
 		}),
 	],
 }

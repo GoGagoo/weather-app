@@ -1,0 +1,1 @@
+export const OPEN_CAGE_DATA_KEY = process.env.OPEN_CAGE_DATA_KEY
