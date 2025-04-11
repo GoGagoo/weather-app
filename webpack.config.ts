@@ -13,7 +13,7 @@ const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
 	entry: './src/index.tsx',
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].js',
+		filename: 'bundle.js',
 	},
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js'],
