@@ -23,26 +23,33 @@ export const SearchResultList: React.FC<Props> = ({
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'ArrowDown') {
-				setHighlightedIndex((prevIndex) =>
-					prevIndex < results.length - 1 ? prevIndex + 1 : prevIndex
-				)
-			} else if (e.key === 'ArrowUp') {
-				setHighlightedIndex((prevIndex) =>
-					prevIndex > 0 ? prevIndex - 1 : prevIndex
-				)
-			} else if (e.key === 'Enter') {
-				if (highlightedIndex >= 0 && highlightedIndex < results.length) {
-					onSelect(results[highlightedIndex].name)
-				}
-				onCloseList()
-			} else if (e.key === 'Escape') onCloseList()
-			
+			switch (e.key) {
+				case 'ArrowDown':
+					setHighlightedIndex((prevIndex) =>
+						prevIndex < results.length - 1 ? prevIndex + 1 : prevIndex
+					)
+					break
+				case 'ArrowUp':
+					setHighlightedIndex((prevIndex) =>
+						prevIndex > 0 ? prevIndex - 1 : prevIndex
+					)
+					break
+				case 'Enter':
+					if (highlightedIndex >= 0 && highlightedIndex < results.length) {
+						onSelect(results[highlightedIndex].name)
+					}
+					onCloseList()
+					break
+				case 'Escape':
+					onCloseList()
+					break
+				default:
+					break
+			}
 		}
 
 		window.addEventListener('keydown', handleKeyDown)
 		return () => window.removeEventListener('keydown', handleKeyDown)
-		
 	}, [highlightedIndex, results, onSelect, onCloseList])
 
 	return (
