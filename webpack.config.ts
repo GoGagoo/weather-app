@@ -3,6 +3,9 @@ import dotenv from 'dotenv'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack from 'webpack'
+
+dotenv.config()
+
 import type { Configuration as DevServerConfiguration } from 'webpack-dev-server'
 
 const config: webpack.Configuration & { devServer: DevServerConfiguration } = {
